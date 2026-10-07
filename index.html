@@ -1,0 +1,1789 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="author" content="Cybele França Brito">
+</head>
+<body>
+<title>Camada a Camada</title>
+<meta name="description" content="Trilha interativa e gamificada sobre peeling e microagulhamento: missões, jogos, brilhos e selos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Figtree:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: a trilha desce pelas camadas da pele (mapa ao lado do texto no desktop, empilhado no celular);
+   cada missão é uma coluna de leitura de ~740px. Tema único, claro, nas cores do folder (rosa + lilás). */
+:root{
+  color-scheme: light;
+  --bg:#F8F1F7;
+  --paper:#FFFCFE;
+  --paper-2:#F4E9F3;
+  --ink:#3A1F47;
+  --muted:#6D5677;
+  --line:#EAD7E8;
+  --rose:#C92C66;
+  --rose-deep:#A3204F;
+  --rose-mid:#F5BDD2;
+  --rose-soft:#FCE3EC;
+  --violet:#6A3D9A;
+  --violet-deep:#4E2A78;
+  --violet-mid:#CDB6EA;
+  --violet-soft:#EDE3F8;
+  --gold:#E8A33A;
+  --gold-deep:#8A560C;
+  --gold-soft:#FCEFD8;
+  --ok:#1E7A4C; --ok-ink:#145234; --ok-soft:#DDF2E6;
+  --alert:#B42318; --alert-ink:#7A1A12; --alert-soft:#FBE1DE;
+  --f-display:"Baloo 2","Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --r-s:12px; --r-m:18px; --r-l:26px;
+  --shadow:0 1px 0 rgba(58,31,71,.04),0 14px 30px -18px rgba(106,61,154,.45);
+  --spark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1.5c.7 5.6 4.4 9.6 10.5 10.5-6.1.9-9.8 4.9-10.5 10.5C11.3 16.9 7.6 12.9 1.5 12 7.6 11.1 11.3 7.1 12 1.5z'/%3E%3C/svg%3E");
+}
+[hidden]{display:none!important}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:1.0625rem;line-height:1.6;padding-inline:16px;padding-block:0 64px}
+@media (min-width:720px){body{padding-inline:28px}}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.08;margin:0;text-wrap:balance;color:var(--ink)}
+p{margin:0}
+ul,ol{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--rose-deep);text-underline-offset:3px}
+::selection{background:var(--rose-mid)}
+:focus-visible{outline:3px solid var(--violet);outline-offset:3px;border-radius:10px}
+[tabindex="-1"]:focus{outline:none}
+.sr-only{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ico{width:1.2em;height:1.2em;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.22em}
+.ico-lg{width:34px;height:34px}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+.eyebrow{font-size:.76rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--rose-deep)}
+.mini-label{font-family:var(--f-body);font-size:.74rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--violet)}
+
+/* ---------- Botões ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:10px 18px;border-radius:999px;border:2px solid var(--violet-mid);background:var(--paper);color:var(--violet-deep);font-weight:700;font-size:1rem;text-align:center;transition:transform .12s ease,background .12s ease,border-color .12s ease}
+.btn:hover{transform:translateY(-1px);border-color:var(--violet)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-primary{background:var(--rose);border-color:var(--rose);color:#fff;box-shadow:0 10px 20px -12px rgba(163,32,79,.8)}
+.btn-primary:hover{background:var(--rose-deep);border-color:var(--rose-deep)}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--violet-deep);text-decoration:underline;text-underline-offset:4px}
+.btn-ghost:hover{border-color:transparent;background:rgba(255,255,255,.5)}
+.btn-lg{min-height:56px;padding:12px 26px;font-size:1.1rem}
+.btn-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.btn-row.center{justify-content:center}
+
+/* ---------- HUD ---------- */
+.hud{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:30;max-width:1120px;margin:8px auto 0;display:flex;align-items:center;gap:10px;padding:7px 8px 9px 10px;background:rgba(255,252,254,.94);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:999px;box-shadow:var(--shadow);overflow:hidden}
+.hud-brand{display:flex;align-items:center;gap:8px;background:none;border:0;padding:4px 6px;font-family:var(--f-display);font-weight:800;font-size:1.18rem;line-height:1;color:var(--violet-deep);white-space:nowrap}
+.brand-mark{width:28px;height:28px;color:var(--rose)}
+.hud-stats{margin-left:auto;display:flex;align-items:center;gap:6px;min-width:0}
+.stat{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:999px;background:var(--paper-2);font-size:.88rem;font-weight:600;white-space:nowrap;line-height:1.2}
+.stat b{font-variant-numeric:tabular-nums;font-weight:800}
+.stat .ico{width:16px;height:16px}
+.stat-pts{background:var(--gold-soft);color:var(--gold-deep)}
+.stat-pts .ico{color:var(--gold)}
+.stat-pts.bump{animation:bump .5s ease}
+.stat-lvl{background:var(--violet-soft);color:var(--violet-deep)}
+.stat-selo{background:var(--rose-soft);color:var(--rose-deep)}
+.btn-map{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;background:var(--violet-deep);color:#fff;padding:7px 12px;font-weight:700;font-size:.88rem}
+body[data-view="mapa"] .btn-map{display:none}
+.hud-bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--paper-2)}
+.hud-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--rose));transition:width .6s ease}
+@media (max-width:620px){
+  .brand-name,.stat-u,.lvl-k,.btn-map span{display:none}
+  .hud{gap:6px;padding-inline:6px}
+  .stat{padding:5px 8px;font-size:.84rem}
+  .btn-map{padding:7px 9px}
+}
+
+/* ---------- Telas ---------- */
+.view{max-width:1120px;margin-inline:auto}
+.mission{max-width:760px;padding-block:22px 0}
+
+/* ---------- Início / mapa ---------- */
+.home{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;padding-block:30px 10px}
+@media (min-width:920px){.home{grid-template-columns:minmax(0,1fr) 440px;gap:52px;align-items:start;padding-top:46px}}
+.home-text{display:grid;gap:18px;align-content:start;min-width:0}
+.hero-title{font-size:clamp(3rem,10vw,4.9rem);font-weight:800;line-height:.9;letter-spacing:-.01em;color:var(--violet-deep);position:relative}
+.hero-title .c2{color:var(--rose)}
+.hero-a{display:inline-grid;place-items:center;width:1.02em;height:1.02em;margin-inline:.04em;border-radius:50%;background:var(--gold);color:#fff;font-size:.56em;line-height:1;vertical-align:.16em;transform:rotate(-10deg);box-shadow:0 6px 14px -6px rgba(138,86,12,.7)}
+.lead{font-size:1.14rem;line-height:1.55;color:var(--muted);max-width:60ch}
+.lumi-row{display:flex;align-items:flex-end;gap:12px}
+.lumi{width:72px;height:72px;flex:none;animation:float 4s ease-in-out infinite}
+.bubble{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:18px 18px 18px 6px;padding:12px 16px;box-shadow:var(--shadow);font-size:.98rem;max-width:44ch}
+.bubble strong{color:var(--rose-deep)}
+.cta-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
+.cta-note{font-size:.92rem;color:var(--muted)}
+.nutshell{border-radius:var(--r-m);background:var(--violet-soft);padding:16px 18px;display:grid;gap:6px;max-width:62ch}
+.nutshell p{color:var(--ink)}
+
+.map-wrap{display:grid;gap:10px;justify-items:center}
+.map{position:relative;width:100%;max-width:440px;aspect-ratio:400/780;border-radius:var(--r-l);overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);background:#FBF4FB}
+.map-bg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.band-t{font-family:var(--f-display);font-weight:800;font-size:13px;letter-spacing:3px;fill:rgba(78,42,120,.42)}
+.seg{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;stroke-dasharray:1 12;opacity:.95}
+.seg.done{stroke:var(--rose);stroke-dasharray:none;stroke-width:5;opacity:1}
+.node{position:absolute;display:flex;align-items:center;gap:8px;background:none;border:0;padding:0;text-align:left;--d:54px}
+.node-l{transform:translate(calc(var(--d) / -2),-50%)}
+.node-r{flex-direction:row-reverse;text-align:right;transform:translate(calc(var(--d) / 2),-50%)}
+.node-c{flex-direction:column;gap:4px;text-align:center;transform:translate(-50%,calc(var(--d) / -2))}
+.node-dot{position:relative;flex:none;width:var(--d);height:var(--d);border-radius:50%;display:grid;place-items:center;background:var(--paper);border:3px solid var(--violet-mid);color:var(--violet);box-shadow:0 8px 16px -8px rgba(78,42,120,.6);transition:transform .15s ease}
+.node:hover .node-dot{transform:scale(1.07)}
+.node-dot>.ico{width:24px;height:24px}
+.node-n{position:absolute;top:-6px;right:-6px;min-width:22px;height:22px;padding-inline:4px;border-radius:999px;background:var(--violet-deep);color:#fff;font-size:.74rem;font-weight:800;display:grid;place-items:center;border:2px solid #fff}
+.node-n .ico{width:12px;height:12px;stroke-width:3}
+.node-txt{display:flex;flex-direction:column;max-width:150px;background:rgba(255,252,254,.92);padding:4px 10px 5px;border-radius:12px;line-height:1.15;box-shadow:0 4px 10px -8px rgba(78,42,120,.5)}
+.node-k{font-size:.66rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.node-t{font-family:var(--f-display);font-weight:700;font-size:1rem;color:var(--ink)}
+.node.is-done .node-dot{background:var(--rose);border-color:#fff;color:#fff}
+.node.is-done .node-n{background:var(--ok)}
+.node.is-next .node-dot{border-color:var(--rose);animation:pulse 2.2s ease-out infinite}
+.node.is-next .node-txt{background:var(--paper);outline:2px solid var(--rose-mid)}
+.node-c .node-dot{--d:62px;background:var(--gold-soft);border-color:var(--gold);color:var(--gold-deep)}
+.node-c.is-done .node-dot{background:var(--gold);color:#fff}
+.map-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;font-size:.84rem;color:var(--muted)}
+.map-legend span{display:inline-flex;align-items:center;gap:6px}
+.lg-dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--violet-mid);background:var(--paper)}
+.lg-dot.done{background:var(--rose);border-color:var(--rose)}
+.lg-dot.next{border-color:var(--rose)}
+
+.progress-sec{display:grid;gap:18px;padding-block:28px 6px}
+@media (min-width:920px){.progress-sec{grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:28px;align-items:start}}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-l);padding:20px;box-shadow:var(--shadow);display:grid;gap:12px;min-width:0}
+.lvl-name{font-family:var(--f-display);font-size:2rem;font-weight:800;line-height:1;color:var(--violet-deep)}
+.lvl-sub{color:var(--muted);font-size:.95rem;font-variant-numeric:tabular-nums}
+.lvl-track{display:flex;gap:4px}
+.lt-seg{display:grid;gap:5px;min-width:0}
+.lt-bar{display:block;height:10px;border-radius:999px;background:var(--paper-2);overflow:hidden}
+.lt-bar span{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--rose));border-radius:inherit;transition:width .6s ease}
+.lt-name{font-size:.72rem;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lt-seg.cur .lt-name{color:var(--rose-deep)}
+.shelf{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 8px}
+@media (min-width:560px){.shelf{grid-template-columns:repeat(7,minmax(0,1fr))}}
+.shelf-item{display:grid;justify-items:center;gap:4px;text-align:center;background:none;border:0;padding:4px 2px;border-radius:14px}
+.shelf-item:hover{background:var(--paper-2)}
+.shelf-name{font-family:var(--f-display);font-weight:700;font-size:.92rem;line-height:1.1}
+.shelf-sub{font-size:.7rem;color:var(--muted);line-height:1.2}
+.shelf-item.on .shelf-sub{color:var(--ok);font-weight:700}
+
+.selo{--s:58px;width:var(--s);height:var(--s);border-radius:50%;display:grid;place-items:center;flex:none;background:var(--paper-2);border:2px dashed var(--violet-mid);color:var(--violet-mid)}
+.selo .ico{width:46%;height:46%}
+.selo.is-on{border:3px solid #fff;color:#fff;background:radial-gradient(circle at 30% 24%,rgba(255,255,255,.55) 0 9%,transparent 10%),linear-gradient(145deg,var(--rose) 0%,var(--violet) 100%);box-shadow:0 0 0 3px var(--rose-mid),0 10px 22px -10px rgba(106,61,154,.8)}
+.selo-lg{--s:76px}
+.selo-xl{--s:116px}
+.selo-xl.is-on{animation:pop .5s cubic-bezier(.2,1.4,.4,1)}
+
+.howto{display:grid;gap:12px;grid-template-columns:minmax(0,1fr);padding-block:22px 0}
+@media (min-width:720px){.howto{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.how{display:flex;gap:12px;align-items:flex-start;padding:16px;border-radius:var(--r-m);background:var(--paper);border:1px solid var(--line)}
+.how-ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex:none}
+.how-ic .ico{width:24px;height:24px}
+.how h3{font-size:1.15rem;margin-bottom:2px}
+.how p{font-size:.95rem;color:var(--muted)}
+
+.foot{margin-top:34px;padding-top:18px;border-top:1px dashed var(--violet-mid);display:grid;gap:12px;font-size:.92rem;color:var(--muted)}
+.reset-box{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.reset-confirm{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px;border-radius:14px;background:var(--alert-soft);color:var(--alert-ink)}
+.btn-danger{background:var(--alert);border-color:var(--alert);color:#fff}
+.btn-danger:hover{background:var(--alert-ink);border-color:var(--alert-ink)}
+.btn-sm{min-height:38px;padding:6px 14px;font-size:.92rem}
+
+/* ---------- Missão ---------- */
+.m-head{display:grid;gap:12px;padding-block:6px 10px}
+.back{justify-self:start;display:inline-flex;align-items:center;gap:6px;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:6px 14px 6px 10px;font-size:.9rem;font-weight:700;color:var(--violet-deep)}
+.back:hover{border-color:var(--violet-mid)}
+.m-title{font-size:clamp(2.3rem,7vw,3.3rem);font-weight:800;color:var(--violet-deep);line-height:.95}
+.m-meta{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;background:var(--paper);border:1px solid var(--line);font-size:.85rem;font-weight:700;color:var(--muted)}
+.chip .ico{width:15px;height:15px}
+.chip-gold{background:var(--gold-soft);border-color:transparent;color:var(--gold-deep)}
+.chip-selo{background:var(--rose-soft);border-color:transparent;color:var(--rose-deep)}
+
+.block{display:grid;gap:14px;padding-block:24px 6px}
+.block>h3{display:flex;align-items:center;gap:10px;font-size:1.5rem;font-weight:700;color:var(--violet-deep)}
+.block>h3::before{content:"";width:.78em;height:.78em;flex:none;background:var(--rose);-webkit-mask:var(--spark) center/contain no-repeat;mask:var(--spark) center/contain no-repeat}
+.block>p{max-width:64ch}
+
+.duo{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:600px){.duo{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.duo-card{border-radius:var(--r-m);padding:16px 18px 18px;display:grid;gap:8px;align-content:start;border:2px solid transparent}
+.duo-card svg.ill{width:100%;max-width:220px;height:auto;aspect-ratio:160/110}
+.duo-card h4{font-size:1.35rem;font-weight:800}
+.tone-p{background:var(--rose-soft);border-color:var(--rose-mid)}
+.tone-p h4{color:var(--rose-deep)}
+.tone-m{background:var(--violet-soft);border-color:var(--violet-mid)}
+.tone-m h4{color:var(--violet-deep)}
+.common{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:var(--paper);border:1px dashed var(--violet-mid)}
+.common .ico{color:var(--gold);margin-top:2px}
+
+.tags{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}
+.tags li{padding:6px 13px;border-radius:999px;background:var(--paper);border:1px solid var(--line);font-weight:600;font-size:.95rem}
+.checklist{list-style:none;padding:0;display:grid;gap:8px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:600px){.checklist{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.checklist li{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:var(--paper);border:1px solid var(--line);font-weight:600}
+.checklist .ico{color:var(--violet);margin-top:2px}
+.steps{list-style:none;padding:0;display:grid;gap:8px;counter-reset:st}
+.steps li{counter-increment:st;display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:var(--paper);border:1px solid var(--line)}
+.steps li::before{content:counter(st);flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--violet-deep);color:#fff;font-weight:800;font-family:var(--f-display);font-size:1.05rem}
+.steps strong{display:block;font-family:var(--f-display);font-size:1.12rem;line-height:1.2}
+.steps span{color:var(--muted);font-size:.97rem}
+
+.callout{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:16px;background:var(--gold-soft);color:#5C3A06}
+.callout .ico{width:24px;height:24px;margin-top:1px}
+.callout strong{display:block;font-family:var(--f-display);font-size:1.12rem;line-height:1.2;margin-bottom:2px}
+.callout.alert{background:var(--alert-soft);color:var(--alert-ink)}
+.callout.violet{background:var(--violet-soft);color:var(--violet-deep)}
+.fx-grid{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:600px){.fx-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.fx-box{border-radius:var(--r-m);padding:16px 18px;display:grid;gap:10px;align-content:start}
+.fx-box h4{font-size:1.25rem;display:flex;align-items:center;gap:8px}
+.fx-ok{background:var(--ok-soft);color:var(--ok-ink)}
+.fx-ok h4{color:var(--ok-ink)}
+.fx-alert{background:var(--alert-soft);color:var(--alert-ink)}
+.fx-alert h4{color:var(--alert-ink)}
+.fx-box .tags li{background:rgba(255,255,255,.75);border-color:transparent}
+
+.devices{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:560px){.devices{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.device{border-radius:var(--r-m);background:var(--paper);border:1px solid var(--line);padding:14px 16px 16px;display:grid;gap:6px;align-content:start}
+.device svg.ill{width:100%;max-width:200px;height:auto;aspect-ratio:160/110;justify-self:center}
+.device h4{font-size:1.25rem;color:var(--violet-deep)}
+.device p{font-size:.97rem}
+
+/* tabela comparativa */
+.table-wrap{overflow-x:auto;border-radius:var(--r-m);border:1px solid var(--line);background:var(--paper)}
+.cmp{width:100%;border-collapse:collapse;font-size:.97rem}
+.cmp th,.cmp td{padding:12px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+.cmp tbody tr:last-child th,.cmp tbody tr:last-child td{border-bottom:0}
+.cmp thead th{font-family:var(--f-display);font-size:1.1rem;letter-spacing:.02em}
+.cmp .th-p{background:var(--rose-soft);color:var(--rose-deep)}
+.cmp .th-m{background:var(--violet-soft);color:var(--violet-deep)}
+.cmp tbody th{font-family:var(--f-display);font-weight:700;color:var(--ink);width:24%;background:var(--paper-2)}
+@media (max-width:600px){
+  .cmp,.cmp tbody,.cmp tr,.cmp th,.cmp td{display:block;width:auto}
+  .cmp thead{display:none}
+  .cmp tr{border-bottom:1px solid var(--line);padding:4px 0 8px}
+  .cmp tbody tr:last-child{border-bottom:0}
+  .cmp tbody th{background:none;padding:10px 14px 4px;border:0;font-size:1.1rem}
+  .cmp td{border:0;padding:4px 14px 4px 26px;position:relative}
+  .cmp td::before{content:attr(data-l);display:block;font-size:.72rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
+  .cmp td:nth-of-type(1)::before{color:var(--rose-deep)}
+  .cmp td:nth-of-type(2)::before{color:var(--violet-deep)}
+  .cmp td::after{content:"";position:absolute;left:14px;top:9px;width:5px;bottom:6px;border-radius:4px}
+  .cmp td:nth-of-type(1)::after{background:var(--rose-mid)}
+  .cmp td:nth-of-type(2)::after{background:var(--violet-mid)}
+}
+
+/* ---------- Jogos (moldura comum) ---------- */
+.game{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:var(--r-l);padding:20px 18px;display:grid;gap:14px;box-shadow:var(--shadow);margin-block:18px 6px;min-width:0}
+@media (min-width:640px){.game{padding:24px 26px}}
+.g-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.g-tag{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.11em;padding:4px 10px;border-radius:999px;background:var(--violet);color:#fff}
+.game.is-done .g-tag{background:var(--ok)}
+.g-head h3{flex:1 1 220px;min-width:0;font-size:1.45rem;font-weight:800;color:var(--ink)}
+.g-pts{font-size:.85rem;font-weight:800;color:var(--gold-deep);background:var(--gold-soft);border-radius:999px;padding:4px 11px;white-space:nowrap}
+.g-hint{color:var(--muted)}
+.x-prog{font-size:.9rem;font-weight:700;color:var(--violet);display:flex;align-items:center;gap:6px}
+.game.is-done .x-prog{color:var(--ok)}
+.x-panel{min-height:76px;border-radius:14px;background:var(--violet-soft);padding:14px 16px;display:grid;align-content:center}
+.x-panel p{max-width:62ch}
+.x-panel strong{color:var(--violet-deep)}
+.x-note{font-size:.93rem;color:var(--muted)}
+
+/* quiz */
+.q-play{display:grid;gap:14px}
+.q-top{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:26px}
+.q-dots{display:flex;flex-wrap:wrap;gap:6px}
+.q-dots span{width:11px;height:11px;border-radius:50%;background:var(--line);transition:background .2s}
+.q-dots span.cur{background:var(--violet);box-shadow:0 0 0 3px var(--violet-soft)}
+.q-dots span.ok{background:var(--ok)}
+.q-dots span.no{background:var(--alert)}
+.q-streak{font-size:.8rem;font-weight:800;color:var(--rose-deep);background:var(--rose-soft);padding:3px 10px;border-radius:999px;animation:pop .3s ease}
+.q-card{border-radius:var(--r-m);padding:20px 20px 22px;display:grid;gap:6px;min-height:118px;align-content:center;background:linear-gradient(160deg,var(--violet-soft),var(--rose-soft))}
+.q-count{font-size:.76rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--violet)}
+.q-text{font-family:var(--f-display);font-size:clamp(1.3rem,3.8vw,1.62rem);font-weight:700;line-height:1.18;color:var(--ink)}
+.q-opts{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.q-opts.long{grid-template-columns:minmax(0,1fr)}
+.opt{display:flex;align-items:center;gap:10px;min-height:54px;padding:10px 14px;border-radius:14px;border:2px solid var(--line);background:var(--paper);font-weight:700;text-align:left;line-height:1.25;transition:transform .12s ease,border-color .12s ease,background .12s ease}
+.opt:hover:not(:disabled){transform:translateY(-2px);border-color:var(--violet-mid);background:#fff}
+.opt .dot{width:13px;height:13px;border-radius:50%;flex:none;background:var(--violet-mid)}
+.opt.t-p .dot{background:var(--rose)}
+.opt.t-m .dot{background:var(--violet)}
+.opt.t-b .dot{background:linear-gradient(90deg,var(--rose) 50%,var(--violet) 50%)}
+.opt.t-ok .dot{background:var(--ok)}
+.opt.t-alert .dot{background:var(--alert)}
+.opt:disabled{cursor:default}
+.opt:disabled:not(.is-right):not(.is-wrong){opacity:.5}
+.opt.is-right{border-color:var(--ok);background:var(--ok-soft);color:var(--ok-ink)}
+.opt.is-wrong{border-color:var(--alert);background:var(--alert-soft);color:var(--alert-ink);animation:shake .35s ease}
+.q-fb:empty{display:none}
+.q-fb{border-radius:14px;padding:12px 14px;line-height:1.5}
+.q-fb.ok{background:var(--ok-soft);color:var(--ok-ink)}
+.q-fb.no{background:var(--alert-soft);color:var(--alert-ink)}
+.q-next-row{display:flex;justify-content:flex-end}
+.q-end{display:grid;gap:10px;justify-items:start}
+.stars{display:flex;gap:4px}
+.stars svg{width:32px;height:32px;color:var(--line)}
+.stars svg.on{color:var(--gold);animation:pop .4s ease both}
+.stars svg.on:nth-child(2){animation-delay:.12s}
+.stars svg.on:nth-child(3){animation-delay:.24s}
+.end-score{font-family:var(--f-display);font-size:2.1rem;font-weight:800;line-height:1;color:var(--violet-deep);font-variant-numeric:tabular-nums}
+
+/* ordem */
+.o-slots{list-style:none;padding:0;display:grid;gap:8px}
+.o-slot{display:flex;gap:12px;align-items:center;min-height:58px;padding:10px 12px;border-radius:14px;border:2px dashed var(--violet-mid);color:var(--muted);font-weight:600}
+.o-slot.filled{border-style:solid;border-color:var(--ok);background:var(--ok-soft);color:var(--ink);animation:pop .3s ease}
+.o-num{width:32px;height:32px;border-radius:50%;flex:none;display:grid;place-items:center;background:var(--violet-soft);color:var(--violet-deep);font-weight:800;font-family:var(--f-display);font-size:1.05rem}
+.o-slot.filled .o-num{background:var(--ok);color:#fff}
+.o-body strong{display:block;font-family:var(--f-display);font-size:1.12rem;line-height:1.2}
+.o-body span{font-size:.94rem;color:var(--muted)}
+.o-label{font-weight:700;color:var(--violet-deep)}
+.o-pool{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.o-tile{display:flex;gap:10px;align-items:flex-start;text-align:left;padding:12px;border-radius:14px;border:2px solid var(--line);background:var(--paper);box-shadow:0 6px 12px -10px rgba(78,42,120,.7);transition:transform .12s ease,border-color .12s ease}
+.o-tile:hover{transform:translateY(-2px);border-color:var(--violet-mid)}
+.o-tile .ico{color:var(--rose);margin-top:2px}
+.o-tile strong{display:block;font-family:var(--f-display);font-size:1.12rem;line-height:1.2}
+.o-tile span span{font-size:.92rem;color:var(--muted)}
+.o-tile.shake{animation:shake .35s ease;border-color:var(--alert)}
+
+/* escolher (kit) */
+.pk-grid{display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (min-width:640px){.pk-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.pk{position:relative;display:grid;gap:6px;justify-items:center;align-content:start;text-align:center;padding:16px 10px 14px;border-radius:16px;border:2px solid var(--line);background:var(--paper);font-weight:700;font-size:.95rem;line-height:1.25;transition:transform .12s ease,border-color .12s ease,background .12s ease}
+.pk:hover:not([aria-disabled="true"]){transform:translateY(-2px);border-color:var(--violet-mid)}
+.pk .pk-ico{width:38px;height:38px;color:var(--violet)}
+.pk[aria-pressed="true"]{border-color:var(--violet);background:var(--violet-soft)}
+.pk[aria-pressed="true"]::after{content:"";position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:var(--violet) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/14px no-repeat}
+.pk[aria-disabled="true"]{cursor:default}
+.pk.good{border-color:var(--ok);background:var(--ok-soft)}
+.pk.bad{border-color:var(--alert);background:var(--alert-soft)}
+.pk.good .pk-ico{color:var(--ok)}
+.pk.bad .pk-ico{color:var(--alert)}
+.pk.miss{box-shadow:0 0 0 3px var(--gold)}
+.pk-badge{font-size:.68rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.85)}
+.pk.good .pk-badge{color:var(--ok-ink)}
+.pk.bad .pk-badge{color:var(--alert-ink)}
+.pk-why{font-weight:500;font-size:.85rem;color:var(--ink)}
+
+/* descobrir: cartões */
+.tcards{display:grid;gap:10px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:640px){.tcards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.tcard{display:grid;gap:8px;align-content:start;justify-items:start;text-align:left;padding:16px;border-radius:18px;border:2px solid var(--line);background:var(--paper);min-height:150px;transition:transform .15s ease,border-color .15s ease,background .15s ease}
+.tcard:hover{transform:translateY(-2px);border-color:var(--rose-mid)}
+.tcard-ill{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:var(--rose-soft);color:var(--rose)}
+.tcard-ill .ico{width:30px;height:30px}
+.tcard-t{font-family:var(--f-display);font-size:1.25rem;font-weight:800;line-height:1.1}
+.tcard-more{font-size:.96rem;font-weight:500;color:var(--ink)}
+.tcard-cue{font-size:.82rem;font-weight:700;color:var(--violet);display:inline-flex;align-items:center;gap:5px}
+.tcard.is-found{border-color:var(--rose-mid);background:var(--rose-soft);animation:pop .3s ease}
+.tcard.is-found .tcard-ill{background:var(--rose);color:#fff}
+.tcard.is-found .tcard-cue{display:none}
+
+/* descobrir: camadas do peeling */
+.layers{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:600px){.layers{grid-template-columns:minmax(0,1fr) 180px;align-items:center}}
+.layers-svg{width:100%;height:auto;display:block;border-radius:18px}
+.lbtns{display:grid;gap:8px;grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (min-width:600px){.lbtns{grid-template-columns:minmax(0,1fr)}}
+.lbtn{display:flex;align-items:center;gap:8px;min-height:48px;padding:8px 12px;border-radius:14px;border:2px solid var(--line);background:var(--paper);font-weight:700;text-align:left;line-height:1.15}
+.lbtn .sw{width:14px;height:14px;border-radius:4px;flex:none}
+.lbtn.is-found{border-color:var(--rose-mid)}
+.lbtn.is-active{border-color:var(--rose);background:var(--rose-soft);color:var(--rose-deep)}
+.reach{transform-origin:0 30px;transform:scaleY(0);transition:transform .55s cubic-bezier(.2,.8,.2,1)}
+[data-active="sup"] .reach{transform:scaleY(.289)}
+[data-active="med"] .reach{transform:scaleY(.622)}
+[data-active="prof"] .reach{transform:scaleY(1)}
+.lv{opacity:0;transition:opacity .3s ease}
+[data-active="sup"] .lv-sup,[data-active="med"] .lv-med,[data-active="prof"] .lv-prof{opacity:1}
+
+/* descobrir: 3 quadros */
+.frames-svg{width:100%;height:auto;display:block;border-radius:18px}
+.fr{opacity:0;transition:opacity .45s ease}
+[data-active="f1"] .fr-f1,[data-active="f2"] .fr-f2,[data-active="f3"] .fr-f3{opacity:1}
+.fbtns{display:grid;gap:8px;grid-template-columns:repeat(3,minmax(0,1fr))}
+.fbtn{display:grid;justify-items:center;gap:2px;padding:10px 6px;border-radius:14px;border:2px solid var(--line);background:var(--paper);font-weight:700;font-size:.92rem;line-height:1.15;text-align:center}
+.fbtn b{font-family:var(--f-display);font-size:1.4rem;line-height:1;color:var(--violet)}
+.fbtn.is-found{border-color:var(--violet-mid)}
+.fbtn.is-active{border-color:var(--violet);background:var(--violet-soft)}
+
+/* descobrir: áreas */
+.areas{position:relative;width:100%;max-width:440px;margin-inline:auto;aspect-ratio:320/260}
+.areas svg{position:absolute;inset:0;width:100%;height:100%}
+.hs{position:absolute;transform:translate(-50%,-50%);display:grid;justify-items:center;gap:4px;background:none;border:0;padding:0}
+.hs-ring{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.92);border:3px solid var(--rose);color:var(--rose);box-shadow:0 6px 14px -6px rgba(163,32,79,.7);animation:pulse 2.2s ease-out infinite}
+.hs-ring .ico{width:20px;height:20px;stroke-width:2.6}
+.hs-label{font-size:.78rem;font-weight:800;background:var(--rose);color:#fff;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.hs.is-found .hs-ring{background:var(--rose);color:#fff;border-color:#fff;animation:none}
+.hs.is-active .hs-ring{box-shadow:0 0 0 4px var(--gold)}
+
+/* roteiro */
+.checks{list-style:none;padding:0;display:grid;gap:8px}
+.checks li{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:14px;border:2px solid var(--line);background:var(--paper);transition:border-color .12s ease,background .12s ease}
+.checks li:has(input:checked){border-color:var(--ok);background:var(--ok-soft)}
+.checks input{width:22px;height:22px;margin:2px 0 0;flex:none;accent-color:var(--ok);cursor:pointer}
+.checks label{cursor:pointer;font-weight:600;line-height:1.4}
+.checks .tag{display:inline-block;margin-left:6px;font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--violet);background:var(--violet-soft);border-radius:999px;padding:1px 8px;vertical-align:.1em}
+.copy-fallback{width:100%;min-height:150px;border-radius:12px;border:1px solid var(--line);padding:10px;font:inherit;font-size:.92rem;background:var(--paper);color:var(--ink)}
+.c-status{font-size:.9rem;font-weight:700;color:var(--ok)}
+
+/* fim de missão */
+.m-end{margin-block:30px 6px;padding:20px;border-radius:var(--r-l);background:linear-gradient(135deg,var(--violet-soft),var(--rose-soft));display:grid;gap:16px}
+.end-row{display:flex;gap:16px;align-items:center}
+.end-row h3{font-size:1.45rem;color:var(--violet-deep)}
+.todo{list-style:none;padding:0;display:grid;gap:4px;margin-top:4px}
+.todo li{display:flex;gap:8px;align-items:center;font-weight:600;color:var(--muted)}
+.todo li.ok{color:var(--ok-ink)}
+.todo li.ok .ico{color:var(--ok)}
+
+/* cartão final */
+.passport{position:relative;overflow:hidden;border-radius:var(--r-l);padding:22px 20px;display:grid;gap:16px;color:var(--ink);background:radial-gradient(circle at 92% 8%,rgba(232,163,58,.28) 0 18%,transparent 19%),linear-gradient(150deg,#FFFFFF 0%,var(--rose-soft) 55%,var(--violet-soft) 100%);border:2px solid var(--rose-mid);box-shadow:var(--shadow);margin-top:18px}
+.pp-head{display:flex;align-items:center;gap:12px}
+.pp-head h3{font-size:1.8rem;font-weight:800;color:var(--violet-deep);line-height:1}
+.pp-head .lumi{width:56px;height:56px;animation:none}
+.field{display:grid;gap:6px;max-width:420px}
+.field label{font-size:.88rem;font-weight:700;color:var(--muted)}
+.field input{min-height:46px;border-radius:12px;border:2px solid var(--line);padding:8px 12px;font:inherit;font-weight:700;color:var(--ink);background:var(--paper)}
+.field input:focus{border-color:var(--violet);outline:none}
+.pp-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pp-stat{background:rgba(255,255,255,.8);border-radius:14px;padding:10px 12px;display:grid;gap:2px;min-width:0}
+.pp-stat b{font-family:var(--f-display);font-size:1.5rem;line-height:1;color:var(--violet-deep);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.pp-stat span{font-size:.75rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.pp-selos{display:flex;flex-wrap:wrap;gap:8px}
+.pp-selos .selo{--s:46px}
+.sources{display:grid;gap:8px;padding-left:1.2em;font-size:.95rem}
+.sources li{padding-left:2px}
+
+/* créditos */
+.site-credit{max-width:1120px;margin:44px auto 0;padding:16px 20px;border-radius:var(--r-l);background:var(--paper);border:1px solid var(--line);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;text-align:center;color:var(--muted);font-size:.95rem}
+.site-credit>.ico{color:var(--rose);width:20px;height:20px}
+.credit-name{font-family:var(--f-display);font-weight:800;font-size:1.15rem;color:var(--violet-deep);white-space:nowrap}
+
+/* sobreposições */
+.modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px;background:rgba(58,31,71,.5)}
+.modal-card{position:relative;width:100%;max-width:420px;background:var(--paper);border-radius:28px;padding:30px 22px 24px;box-shadow:0 30px 60px -20px rgba(58,31,71,.6);animation:pop .35s cubic-bezier(.2,1.3,.4,1)}
+.modal-body{display:grid;gap:10px;justify-items:center;text-align:center}
+.modal-body h2{font-size:2rem;font-weight:800;color:var(--violet-deep)}
+.modal-x{position:absolute;top:10px;right:10px;width:40px;height:40px;border-radius:50%;border:0;background:var(--paper-2);display:grid;place-items:center;color:var(--violet-deep)}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);z-index:70;transform:translate(-50%,20px);opacity:0;max-width:calc(100% - 32px);padding:12px 18px;border-radius:999px;background:var(--violet-deep);color:#fff;font-weight:700;box-shadow:0 14px 30px -12px rgba(58,31,71,.7);transition:opacity .25s ease,transform .25s ease;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.big{background:linear-gradient(90deg,var(--rose),var(--violet))}
+.floatpts{position:fixed;z-index:70;pointer-events:none;transform:translate(-50%,-50%);font-family:var(--f-display);font-weight:800;font-size:1.1rem;color:var(--gold-deep);background:var(--gold-soft);border:2px solid #fff;border-radius:999px;padding:2px 12px;box-shadow:0 8px 16px -8px rgba(138,86,12,.6);animation:floatup 1.1s ease forwards;white-space:nowrap}
+.fx{position:fixed;inset:0;width:100%;height:100%;z-index:65;pointer-events:none}
+
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(201,44,102,.45)}70%{box-shadow:0 0 0 14px rgba(201,44,102,0)}100%{box-shadow:0 0 0 0 rgba(201,44,102,0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+@keyframes pop{0%{transform:scale(.85);opacity:.4}100%{transform:scale(1);opacity:1}}
+@keyframes bump{0%,100%{transform:scale(1)}40%{transform:scale(1.18)}}
+@keyframes floatup{0%{opacity:0;margin-top:0}15%{opacity:1}100%{opacity:0;margin-top:-56px}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-6px) rotate(4deg)}}
+@keyframes twinkle{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+.twinkle{transform-box:fill-box;transform-origin:center;animation:twinkle 2.6s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<!-- ============ ÍCONES E ILUSTRAÇÕES ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="gEpi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDECF3"/><stop offset="1" stop-color="#F9DBE7"/></linearGradient>
+    <linearGradient id="gDer" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6CADB"/><stop offset="1" stop-color="#F0B8CE"/></linearGradient>
+    <linearGradient id="gFun" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E9AAC8"/><stop offset="1" stop-color="#DC97BC"/></linearGradient>
+    <radialGradient id="gGlow"><stop offset="0" stop-color="#FFF4D6" stop-opacity=".95"/><stop offset="1" stop-color="#FFF4D6" stop-opacity="0"/></radialGradient>
+    <linearGradient id="gLumi" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFB3CF"/><stop offset=".55" stop-color="#E5528A"/><stop offset="1" stop-color="#A63FC0"/></linearGradient>
+  </defs>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 1.5c.7 5.6 4.4 9.6 10.5 10.5-6.1.9-9.8 4.9-10.5 10.5C11.3 16.9 7.6 12.9 1.5 12 7.6 11.1 11.3 7.1 12 1.5z"/></symbol>
+  <symbol id="i-lupa" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/><path d="M7.8 9.4a3 3 0 0 1 2.6-2"/></symbol>
+  <symbol id="i-camadas" viewBox="0 0 24 24"><path d="M12 3 2.5 8 12 13l9.5-5L12 3z"/><path d="m2.5 12.2 9.5 5 9.5-5"/><path d="m2.5 16.4 9.5 5 9.5-5"/></symbol>
+  <symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 2.8 19.5 6v5.6c0 4.6-3.1 8.2-7.5 9.9-4.4-1.7-7.5-5.3-7.5-9.9V6L12 2.8z"/><circle cx="12" cy="11.6" r="2.5"/><path d="M12 6.9v1.2M12 15.1v1.2M7.3 11.6h1.2M15.5 11.6h1.2"/></symbol>
+  <symbol id="i-roller" viewBox="0 0 24 24"><rect x="2.5" y="3.5" width="11" height="8" rx="4"/><path d="M5.6 5.6v3.8M8 5.6v3.8M10.4 5.6v3.8"/><path d="M13.5 7.5h2.4l1.7 2.4"/><path d="M17.6 9.9 21 21"/></symbol>
+  <symbol id="i-caneta" viewBox="0 0 24 24"><g transform="rotate(-45 12 12)"><rect x="9.5" y="2" width="5" height="14.5" rx="2.5"/><path d="M10.4 16.5h3.2l-.9 3.2h-1.4z"/><path d="M12 19.7v2.6"/><path d="M11 6h2"/></g></symbol>
+  <symbol id="i-versus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/><path d="m6.2 9.5 1.6 5 1.6-5"/><path d="M17.6 10.1c-.4-.4-.9-.6-1.5-.6-.8 0-1.4.5-1.4 1.1 0 1.6 3 1.1 3 2.6 0 .7-.6 1.2-1.5 1.2-.6 0-1.2-.3-1.6-.7"/></symbol>
+  <symbol id="i-pergunta" viewBox="0 0 24 24"><path d="M4 4.5h16a1 1 0 0 1 1 1V16a1 1 0 0 1-1 1h-9.5L5 21v-4H4a1 1 0 0 1-1-1V5.5a1 1 0 0 1 1-1z"/><path d="M9.8 8.9a2.3 2.3 0 1 1 3.3 2.1c-.7.3-1.1.8-1.1 1.5v.2"/><path d="M12 14.9h.01"/></symbol>
+  <symbol id="i-medalha" viewBox="0 0 24 24"><path d="M8.6 9.9 6 3h4.3l1.7 4.4M15.4 9.9 18 3h-4.3"/><circle cx="12" cy="15.2" r="6"/><path d="m12 12.3.9 1.9 2.1.3-1.5 1.4.4 2.1-1.9-1-1.9 1 .4-2.1-1.5-1.4 2.1-.3z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-circ" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5 21.5 20h-19L12 3.5z"/><path d="M12 10v4.5"/><path d="M12 17.3h.01"/></symbol>
+  <symbol id="i-mapa" viewBox="0 0 24 24"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20V6.5z"/><path d="M9 4v13.5M15 6.5V20"/></symbol>
+  <symbol id="i-clip" viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="17" rx="2.5"/><rect x="9" y="2.5" width="6" height="4" rx="1.2"/><path d="m8.5 12 1.5 1.5 2.5-2.5M14 12.5h2M8.5 17h7.5"/></symbol>
+  <symbol id="i-plano" viewBox="0 0 24 24"><path d="M7 3h7l5 5v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/><path d="M9 12h6M9 15.5h6M9 19h3.5"/></symbol>
+  <symbol id="i-pincel" viewBox="0 0 24 24"><path d="M18.6 3.4a2 2 0 0 1 2.9 2.9l-8.4 8.4-2.9-2.9z"/><path d="M10.2 11.8c-2 0-3.6 1.6-3.6 3.6 0 1.3-.9 2.6-3.3 3.4 3.6 1.6 7.8.6 9.1-1.8.6-1.2.4-2.6-.6-3.6"/></symbol>
+  <symbol id="i-falar" viewBox="0 0 24 24"><path d="M4 5h16v11H10.5L5.5 20v-4H4z"/><path d="M8 9h8M8 12.5h5"/></symbol>
+  <symbol id="i-protetor" viewBox="0 0 24 24"><path d="M7.5 3h9l-1.3 13.5H8.8z"/><rect x="9" y="16.5" width="6" height="4.5" rx="1"/><circle cx="12" cy="9.5" r="1.8"/><path d="M12 5.8v.8M12 12.4v.8M8.8 9.5h.8M14.4 9.5h.8"/></symbol>
+  <symbol id="i-gota" viewBox="0 0 24 24"><path d="M12 3c3.2 4 6 7.4 6 10.6A6 6 0 0 1 6 13.6C6 10.4 8.8 7 12 3z"/><path d="M9.2 14.2a2.8 2.8 0 0 0 2.6 2.6"/></symbol>
+  <symbol id="i-chapeu" viewBox="0 0 24 24"><path d="M2.5 16.5c3 2.2 16 2.2 19 0"/><path d="M6.5 16.6c.2-5.2 2.4-8.6 5.5-8.6s5.3 3.4 5.5 8.6"/><path d="M7.3 13.3c3 .9 6.4.9 9.4 0"/></symbol>
+  <symbol id="i-batom" viewBox="0 0 24 24"><rect x="8" y="13" width="8" height="8" rx="1"/><path d="M9.5 13V9.4L14.5 6v7"/><path d="M8 16.5h8"/></symbol>
+  <symbol id="i-sol" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></symbol>
+  <symbol id="i-frasco" viewBox="0 0 24 24"><path d="M9.5 3h5M10.5 3v6L5.2 18.6A1.6 1.6 0 0 0 6.6 21h10.8a1.6 1.6 0 0 0 1.4-2.4L13.5 9V3"/><path d="M7.6 15h8.8"/></symbol>
+  <symbol id="i-celular" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="m10.5 9.3 4 2.5-4 2.5z"/><path d="M11 18.5h2"/></symbol>
+  <symbol id="i-esponja" viewBox="0 0 24 24"><rect x="3.5" y="7" width="17" height="10" rx="4"/><path stroke-width="2.6" d="M7.5 10.6h.01M11 10.6h.01M14.5 10.6h.01M9.2 13.6h.01M12.8 13.6h.01M16.4 13.6h.01"/></symbol>
+  <symbol id="i-abacaxi" viewBox="0 0 24 24"><ellipse cx="12" cy="15" rx="5.5" ry="6.5"/><path d="m8.3 11.6 7.4 6.8M15.7 11.6l-7.4 6.8"/><path d="M12 8.5V4.5M12 8.5 9.2 5M12 8.5 14.8 5M12 8.5 8.6 7.2M12 8.5l3.4-1.3"/></symbol>
+  <symbol id="i-profissional" viewBox="0 0 24 24"><circle cx="10" cy="7.8" r="3.8"/><path d="M3.5 20c.6-3.8 3.2-6 6.5-6 1.5 0 2.8.4 3.9 1.2"/><path d="m15 18 2 2 4-4.5"/></symbol>
+  <symbol id="i-seta" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/></symbol>
+  <symbol id="i-copiar" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5A1.5 1.5 0 0 0 14 3.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></symbol>
+  <symbol id="i-nivel" viewBox="0 0 24 24"><path d="M4 20V14M10 20V9M16 20V4"/><path d="M2.5 20.5h19"/></symbol>
+  <symbol id="i-toque" viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10l4.3.9a2 2 0 0 1 1.6 2.2l-.6 4.6a3 3 0 0 1-3 2.6h-3.6a3 3 0 0 1-2.4-1.2L5.4 15a1.4 1.4 0 0 1 2.1-1.9L9 14.5"/></symbol>
+
+  <symbol id="lumi" viewBox="0 0 100 100">
+    <path d="M50 3C55 33 67 45 97 50 67 55 55 67 50 97 45 67 33 55 3 50 33 45 45 33 50 3Z" fill="url(#gLumi)" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="36.5" cy="56" r="4" fill="#FFD3E3" opacity=".95"/><circle cx="63.5" cy="56" r="4" fill="#FFD3E3" opacity=".95"/>
+    <ellipse cx="43" cy="48" rx="3.2" ry="4" fill="#3A1F47"/><ellipse cx="57" cy="48" rx="3.2" ry="4" fill="#3A1F47"/>
+    <circle cx="44.2" cy="46.6" r="1.1" fill="#fff"/><circle cx="58.2" cy="46.6" r="1.1" fill="#fff"/>
+    <path d="M44.5 56.5q5.5 5 11 0" fill="none" stroke="#3A1F47" stroke-width="2.6" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="ill-peeling" viewBox="0 0 160 110">
+    <rect x="12" y="60" width="136" height="44" rx="12" fill="#F5BDD2"/>
+    <path d="M12 72c0-6 5-12 12-12h112c7 0 12 6 12 12v6H12z" fill="#FCE3EC"/>
+    <path d="M14 64c12-6 22 4 34 0s22-6 34 0 22 4 34 0 20-4 30 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    <g fill="#fff" opacity=".6"><ellipse cx="32" cy="86" rx="9" ry="4.5"/><ellipse cx="58" cy="93" rx="9" ry="4.5"/><ellipse cx="84" cy="85" rx="9" ry="4.5"/><ellipse cx="110" cy="93" rx="9" ry="4.5"/><ellipse cx="130" cy="84" rx="9" ry="4.5"/></g>
+    <rect x="91" y="6" width="18" height="17" rx="8.5" fill="#C92C66"/>
+    <rect x="93" y="21" width="14" height="6" rx="2" fill="#4E2A78"/>
+    <path d="M95.5 27h9l-2.2 20h-4.6z" fill="#fff" stroke="#6A3D9A" stroke-width="2.6" stroke-linejoin="round"/>
+    <path d="M100 51c3 4 4.5 6.4 4.5 8.4a4.5 4.5 0 0 1-9 0c0-2 1.5-4.4 4.5-8.4z" fill="#9B6BD1"/>
+    <path class="twinkle" d="M38 18l2.2 6.8L47 27l-6.8 2.2L38 36l-2.2-6.8L29 27l6.8-2.2z" fill="#E8A33A"/>
+    <path class="twinkle" style="animation-delay:.9s" d="M134 30l1.4 4.1 4.1 1.4-4.1 1.4-1.4 4.1-1.4-4.1-4.1-1.4 4.1-1.4z" fill="#C92C66"/>
+  </symbol>
+  <symbol id="ill-micro" viewBox="0 0 160 110">
+    <rect x="12" y="60" width="136" height="44" rx="12" fill="#E7D6F5"/>
+    <path d="M12 72c0-6 5-12 12-12h112c7 0 12 6 12 12v6H12z" fill="#F6EEFC"/>
+    <path d="M14 64c12-6 22 4 34 0s22-6 34 0 22 4 34 0 20-4 30 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    <g stroke="#A3204F" stroke-width="2.6" stroke-linecap="round"><path d="M26 67v8M38 67v8M50 67v8M62 67v8"/></g>
+    <g fill="none" stroke="#C92C66" stroke-width="2" stroke-linecap="round" opacity=".7"><path d="M20 90c14-5 26 5 40 0s26-5 40 0 26 5 40 0"/></g>
+    <rect x="70" y="32" width="46" height="26" rx="13" fill="#EDE3F8" stroke="#6A3D9A" stroke-width="3"/>
+    <g stroke="#6A3D9A" stroke-width="2.2" stroke-linecap="round"><path d="M81 37v16M89 37v16M97 37v16M105 37v16"/></g>
+    <path d="M116 45h8l7-7" fill="none" stroke="#6A3D9A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M131 38 147 13" stroke="#C92C66" stroke-width="10" stroke-linecap="round"/>
+    <path class="twinkle" d="M40 16l2.2 6.8L49 25l-6.8 2.2L40 34l-2.2-6.8L31 25l6.8-2.2z" fill="#E8A33A"/>
+  </symbol>
+  <symbol id="ill-caneta" viewBox="0 0 160 110">
+    <g transform="rotate(-28 80 55)">
+      <rect x="40" y="44" width="92" height="22" rx="11" fill="#F3EAFB" stroke="#6A3D9A" stroke-width="3"/>
+      <rect x="22" y="47" width="22" height="16" rx="4" fill="#F5BDD2" stroke="#C92C66" stroke-width="3"/>
+      <path d="M22 55h-9" stroke="#A3204F" stroke-width="3" stroke-linecap="round"/>
+      <rect x="74" y="39" width="18" height="7" rx="3.5" fill="#C92C66"/>
+      <path d="M106 50v10M114 50v10M122 50v10" stroke="#CDB6EA" stroke-width="3" stroke-linecap="round"/>
+      <path d="M132 55h12" stroke="#6A3D9A" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    <path class="twinkle" d="M30 18l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" fill="#E8A33A"/>
+    <path class="twinkle" style="animation-delay:1.1s" d="M132 82l1.4 4.1 4.1 1.4-4.1 1.4-1.4 4.1-1.4-4.1-4.1-1.4 4.1-1.4z" fill="#C92C66"/>
+  </symbol>
+  <symbol id="ill-roller" viewBox="0 0 160 110">
+    <rect x="20" y="56" width="58" height="34" rx="17" fill="#FCE3EC" stroke="#C92C66" stroke-width="3"/>
+    <g stroke="#C92C66" stroke-width="2.4" stroke-linecap="round"><path d="M33 61v24M43 61v24M53 61v24M63 61v24"/></g>
+    <path d="M78 73h12l10-10" fill="none" stroke="#6A3D9A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M100 63 132 20" stroke="#6A3D9A" stroke-width="11" stroke-linecap="round"/>
+    <path d="M104 58 129 24" stroke="#CDB6EA" stroke-width="3" stroke-linecap="round"/>
+    <path d="M18 101h62" stroke="#E8A33A" stroke-width="3" stroke-dasharray="2 8" stroke-linecap="round"/>
+    <path class="twinkle" d="M136 74l1.6 4.8 4.8 1.6-4.8 1.6-1.6 4.8-1.6-4.8-4.8-1.6 4.8-1.6z" fill="#E8A33A"/>
+  </symbol>
+</svg>
+
+<!-- ============ PLACAR FIXO ============ -->
+<header class="hud" id="hud">
+  <button type="button" class="hud-brand" data-go="mapa" aria-label="Camada a Camada: ir para o mapa">
+    <svg class="brand-mark" aria-hidden="true"><use href="#i-spark"/></svg><span class="brand-name">Camada a Camada</span>
+  </button>
+  <div class="hud-stats">
+    <span class="stat stat-pts" title="Brilhos"><svg class="ico" aria-hidden="true"><use href="#i-spark"/></svg><b id="hud-pts">0</b><span class="stat-u">brilhos</span></span>
+    <span class="stat stat-lvl"><span class="lvl-k">Nível</span><b id="hud-lvl">Superfície</b></span>
+    <span class="stat stat-selo" title="Selos conquistados"><svg class="ico" aria-hidden="true"><use href="#i-medalha"/></svg><b id="hud-selos">0/7</b><span class="stat-u">selos</span></span>
+    <button type="button" class="btn-map" data-go="mapa"><svg class="ico" aria-hidden="true"><use href="#i-mapa"/></svg><span>Mapa</span></button>
+  </div>
+  <div class="hud-bar" aria-hidden="true"><span id="hud-fill"></span></div>
+</header>
+
+<main id="app">
+
+<!-- ============ MAPA (INÍCIO) ============ -->
+<section class="view" id="v-mapa" aria-labelledby="t-mapa">
+  <div class="home">
+    <div class="home-text">
+      <p class="eyebrow">Peeling e microagulhamento</p>
+      <h1 class="hero-title" id="t-mapa" tabindex="-1">Camada <span class="hero-a">a</span> <span class="c2">Camada</span></h1>
+      <p class="lead">Uma trilha com 6 missões e um desafio final para entender o que são o peeling e o microagulhamento, como costuma ser uma sessão e quais cuidados eles pedem.</p>
+      <div class="lumi-row">
+        <svg class="lumi" aria-hidden="true"><use href="#lumi"/></svg>
+        <p class="bubble">Oi, eu sou a <strong>Lumi</strong>! Cada acerto vale <strong>brilhos</strong>. Termine os jogos de uma missão e o <strong>selo</strong> dela é seu.</p>
+      </div>
+      <div class="cta-row">
+        <button type="button" class="btn btn-primary btn-lg" id="cta" data-go="m1">Começar a Missão 1 <svg class="ico" aria-hidden="true"><use href="#i-seta"/></svg></button>
+        <span class="cta-note" id="cta-note">Cerca de 25 minutos no total. O progresso fica salvo neste aparelho.</span>
+      </div>
+      <aside class="nutshell">
+        <h2 class="mini-label">Em poucas palavras</h2>
+        <p>São procedimentos diferentes que podem provocar uma resposta controlada da pele. A indicação depende de avaliação individual; nenhum é adequado para todas as pessoas.</p>
+      </aside>
+    </div>
+
+    <div class="map-wrap">
+      <div class="map" id="map" role="group" aria-label="Mapa das missões">
+        <svg class="map-bg" viewBox="0 0 400 780" preserveAspectRatio="none" aria-hidden="true">
+          <rect width="400" height="780" fill="#FBF4FB"/>
+          <g id="map-sky"></g>
+          <path d="M0 52C40 40 80 62 130 50S220 38 270 52 360 62 400 48V780H0Z" fill="url(#gEpi)"/>
+          <path d="M0 340C70 328 140 352 210 338S340 326 400 342V780H0Z" fill="url(#gDer)"/>
+          <path d="M0 640C80 628 160 652 240 638S350 630 400 644V780H0Z" fill="url(#gFun)"/>
+          <path d="M0 52C40 40 80 62 130 50S220 38 270 52 360 62 400 48" fill="none" stroke="#fff" stroke-width="3"/>
+          <g id="map-tex"></g>
+          <g id="map-ticks"></g>
+          <text class="band-t" transform="translate(27 196) rotate(-90)" text-anchor="middle">EPIDERME</text>
+          <text class="band-t" transform="translate(27 490) rotate(-90)" text-anchor="middle">DERME</text>
+          <circle cx="200" cy="722" r="78" fill="url(#gGlow)"/>
+          <g id="map-segs"></g>
+        </svg>
+      </div>
+      <div class="map-legend" aria-hidden="true">
+        <span><i class="lg-dot done"></i>Concluída</span>
+        <span><i class="lg-dot next"></i>Próxima</span>
+        <span><i class="lg-dot"></i>Disponível</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="progress-sec">
+    <div class="card">
+      <p class="mini-label">Seu nível</p>
+      <p class="lvl-name" id="lvl-name">Superfície</p>
+      <p class="lvl-sub" id="lvl-sub"></p>
+      <div class="lvl-track" id="lvl-track"></div>
+    </div>
+    <div class="card">
+      <p class="mini-label">Seus selos</p>
+      <div class="shelf" id="shelf"></div>
+    </div>
+  </div>
+
+  <div class="howto">
+    <div class="how"><span class="how-ic" style="background:var(--gold-soft);color:var(--gold)"><svg class="ico" aria-hidden="true"><use href="#i-spark"/></svg></span><div><h3>Brilhos</h3><p>Cada acerto vale brilhos. Errou? A explicação aparece e você segue em frente.</p></div></div>
+    <div class="how"><span class="how-ic" style="background:var(--rose-soft);color:var(--rose)"><svg class="ico" aria-hidden="true"><use href="#i-medalha"/></svg></span><div><h3>Selos</h3><p>Termine todos os jogos de uma missão para ganhar o selo dela e um bônus.</p></div></div>
+    <div class="how"><span class="how-ic" style="background:var(--violet-soft);color:var(--violet)"><svg class="ico" aria-hidden="true"><use href="#i-nivel"/></svg></span><div><h3>Níveis</h3><p>Seus brilhos levam você da Superfície até o Brilho Total.</p></div></div>
+  </div>
+
+  <footer class="foot">
+    <p>Material educativo introdutório. Não ensina a executar procedimentos e não substitui avaliação profissional.</p>
+    <div class="reset-box">
+      <button type="button" class="btn btn-sm" id="reset"><svg class="ico" aria-hidden="true"><use href="#i-reset"/></svg>Recomeçar do zero</button>
+      <div class="reset-confirm" id="reset-confirm" hidden>
+        <span>Apagar brilhos, selos e respostas deste aparelho?</span>
+        <button type="button" class="btn btn-sm btn-danger" id="reset-yes">Apagar tudo</button>
+        <button type="button" class="btn btn-sm" id="reset-no">Cancelar</button>
+      </div>
+    </div>
+  </footer>
+</section>
+
+<!-- ============ MISSÃO 1 ============ -->
+<section class="view mission" id="v-m1" hidden aria-labelledby="t-m1">
+  <div class="m-head">
+    <button type="button" class="back" data-go="mapa"><svg class="ico" aria-hidden="true"><use href="#i-mapa"/></svg>Mapa</button>
+    <p class="eyebrow">Missão 1 de 6</p>
+    <h2 class="m-title" id="t-m1" tabindex="-1">O que são?</h2>
+    <p class="lead">A estética une ciência, saúde e bem-estar. Entre os procedimentos mais procurados estão o peeling e o microagulhamento. Os dois buscam uma resposta controlada da pele, mas agem de jeitos diferentes.</p>
+    <div class="m-meta" data-meta></div>
+  </div>
+
+  <div class="block">
+    <h3>Dois procedimentos, dois jeitos de agir</h3>
+    <div class="duo">
+      <article class="duo-card tone-p">
+        <svg class="ill" aria-hidden="true"><use href="#ill-peeling"/></svg>
+        <h4>Peeling</h4>
+        <p>Renovação controlada da pele. Pode usar uma ação física, substâncias como ácidos ou enzimas.</p>
+      </article>
+      <article class="duo-card tone-m">
+        <svg class="ill" aria-hidden="true"><use href="#ill-micro"/></svg>
+        <h4>Microagulhamento</h4>
+        <p>Um dispositivo com microagulhas cria microperfurações controladas. A resposta de reparação do organismo pode estimular a remodelação da pele.</p>
+      </article>
+    </div>
+    <p class="common"><svg class="ico" aria-hidden="true"><use href="#i-spark"/></svg><span><strong>Em comum:</strong> os dois começam por uma avaliação individual, e a indicação muda de pessoa para pessoa.</span></p>
+  </div>
+
+  <div class="game" data-game="m1-quem"></div>
+  <div class="m-end" data-end="m1"></div>
+</section>
+
+<!-- ============ MISSÃO 2 ============ -->
+<section class="view mission" id="v-m2" hidden aria-labelledby="t-m2">
+  <div class="m-head">
+    <button type="button" class="back" data-go="mapa"><svg class="ico" aria-hidden="true"><use href="#i-mapa"/></svg>Mapa</button>
+    <p class="eyebrow">Missão 2 de 6</p>
+    <h2 class="m-title" id="t-m2" tabindex="-1">Peeling</h2>
+    <p class="lead">Peeling é um procedimento de renovação controlada da pele. O modo de ação e a profundidade variam conforme a técnica, o agente usado e as características de cada pele.</p>
+    <div class="m-meta" data-meta></div>
+  </div>
+
+  <div class="game" data-game="m2-tecnicas" data-mode="cards">
+    <p class="g-hint">Toque em cada cartão para abrir.</p>
+    <div class="tcards">
+      <button type="button" class="tcard" data-spot="fisico" aria-expanded="false">
+        <span class="tcard-ill"><svg class="ico" aria-hidden="true"><use href="#i-esponja"/></svg></span>
+        <span class="tcard-t">Físico ou mecânico</span>
+        <span class="tcard-more" data-detail="fisico">Usa uma ação física para favorecer a remoção de células da superfície. A intensidade depende do método.</span>
+        <span class="tcard-cue"><svg class="ico" aria-hidden="true"><use href="#i-toque"/></svg>Toque para abrir</span>
+      </button>
+      <button type="button" class="tcard" data-spot="quimico" aria-expanded="false">
+        <span class="tcard-ill"><svg class="ico" aria-hidden="true"><use href="#i-frasco"/></svg></span>
+        <span class="tcard-t">Químico</span>
+        <span class="tcard-more" data-detail="quimico">Usa substâncias selecionadas, como ácidos, para provocar uma renovação controlada. Pode ser superficial, médio ou profundo.</span>
+        <span class="tcard-cue"><svg class="ico" aria-hidden="true"><use href="#i-toque"/></svg>Toque para abrir</span>
+      </button>
+      <button type="button" class="tcard" data-spot="enzimatico" aria-expanded="false">
+        <span class="tcard-ill"><svg class="ico" aria-hidden="true"><use href="#i-abacaxi"/></svg></span>
+        <span class="tcard-t">Enzimático</span>
+        <span class="tcard-more" data-detail="enzimatico">Usa enzimas que auxiliam na renovação da pele. Costuma ser uma opção mais suave.</span>
+        <span class="tcard-cue"><svg class="ico" aria-hidden="true"><use href="#i-toque"/></svg>Toque para abrir</span>
+      </button>
+    </div>
+    <p class="x-prog"></p>
+  </div>
+
+  <div class="game" data-game="m2-camadas" data-mode="panel">
+    <p class="g-hint">Os peelings químicos são classificados pela profundidade de ação. Toque em cada uma para ver até onde ela chega.</p>
+    <div class="layers">
+      <svg class="layers-svg" viewBox="0 0 320 210" aria-hidden="true">
+        <defs><clipPath id="clipLayers"><rect width="320" height="210" rx="18"/></clipPath></defs>
+        <g clip-path="url(#clipLayers)">
+          <rect width="320" height="210" fill="#FBF4FB"/>
+          <path d="M0 34c40-10 70 8 110 0s80-10 120 0 60 8 90 0V82H0z" fill="#FCE3EC"/>
+          <g fill="#fff" opacity=".7"><ellipse cx="40" cy="58" rx="12" ry="5"/><ellipse cx="72" cy="66" rx="12" ry="5"/><ellipse cx="106" cy="56" rx="12" ry="5"/><ellipse cx="140" cy="66" rx="12" ry="5"/><ellipse cx="176" cy="57" rx="12" ry="5"/><ellipse cx="210" cy="66" rx="12" ry="5"/><ellipse cx="244" cy="56" rx="12" ry="5"/><ellipse cx="280" cy="65" rx="12" ry="5"/></g>
+          <rect y="82" width="320" height="60" fill="#F5C9DA"/>
+          <g fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".75"><path d="M10 98c30-8 50 8 80 0s50-8 80 0 50 8 80 0 40-6 60 0"/><path d="M0 114c30-8 50 8 80 0s50-8 80 0 50 8 80 0 40-6 80 0"/><path d="M10 130c30-8 50 8 80 0s50-8 80 0 50 8 80 0 40-6 60 0"/></g>
+          <rect y="142" width="320" height="68" fill="#EBAFC8"/>
+          <g fill="none" stroke="#fff" stroke-width="2" opacity=".6"><circle cx="40" cy="172" r="15"/><circle cx="92" cy="182" r="17"/><circle cx="150" cy="170" r="15"/><circle cx="206" cy="184" r="17"/><circle cx="262" cy="172" r="15"/><circle cx="306" cy="190" r="13"/></g>
+          <path d="M0 82h320M0 142h320" stroke="#fff" stroke-width="2" stroke-dasharray="4 6"/>
+          <rect class="reach" x="0" y="30" width="320" height="180" fill="#C92C66" opacity=".2"/>
+          <g class="lv lv-sup"><path d="M0 82h320" stroke="#A3204F" stroke-width="3"/></g>
+          <g class="lv lv-med"><path d="M0 142h320" stroke="#A3204F" stroke-width="3"/></g>
+          <g class="lv lv-prof"><path d="M0 207h320" stroke="#A3204F" stroke-width="5"/></g>
+          <path d="M0 34c40-10 70 8 110 0s80-10 120 0 60 8 90 0" fill="none" stroke="#fff" stroke-width="3"/>
+          <path class="twinkle" d="M150 4l1.6 4.8 4.8 1.6-4.8 1.6-1.6 4.8-1.6-4.8-4.8-1.6 4.8-1.6z" fill="#E8A33A"/>
+        </g>
+      </svg>
+      <div class="lbtns">
+        <button type="button" class="lbtn" data-spot="sup" aria-pressed="false"><span class="sw" style="background:#FCE3EC;border:1px solid #F5BDD2"></span>Superficial</button>
+        <button type="button" class="lbtn" data-spot="med" aria-pressed="false"><span class="sw" style="background:#F5C9DA"></span>Médio</button>
+        <button type="button" class="lbtn" data-spot="prof" aria-pressed="false"><span class="sw" style="background:#EBAFC8"></span>Profundo</button>
+      </div>
+    </div>
+    <div class="x-panel" aria-live="polite">
+      <p data-detail="none">Toque em uma profundidade para ver até onde ela chega.</p>
+      <p data-detail="sup" hidden><strong>Superficial.</strong> Age mais na superfície, nas camadas externas da pele.</p>
+      <p data-detail="med" hidden><strong>Médio.</strong> Alcança camadas um pouco mais profundas que o superficial.</p>
+      <p data-detail="prof" hidden><strong>Profundo.</strong> Chega às camadas mais profundas das três. O tempo de recuperação varia conforme a profundidade.</p>
+    </div>
+    <p class="x-note">Quem escolhe a técnica e a intensidade é o profissional, depois da avaliação.</p>
+    <p class="x-prog"></p>
+  </div>
+
+  <div class="block">
+    <h3>Indicações mais comuns</h3>
+    <ul class="checklist">
+      <li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Manchas superficiais</li>
+      <li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Oleosidade e acne</li>
+      <li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Textura e poros dilatados</li>
+      <li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Sinais de envelhecimento</li>
+    </ul>
+    <p class="muted small">A indicação depende de avaliação individual. O objetivo geral é melhorar a aparência da pele de forma segura e planejada.</p>
+  </div>
+
+  <div class="game" data-game="m2-qual"></div>
+
+  <div class="block">
+    <p class="callout alert"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><span><strong>Peeling não é receita caseira</strong>Não tente reproduzir peelings com receitas caseiras, ácidos concentrados ou tutoriais.</span></p>
+  </div>
+  <div class="m-end" data-end="m2"></div>
+</section>
+
+<!-- ============ MISSÃO 3 ============ -->
+<section class="view mission" id="v-m3" hidden aria-labelledby="t-m3">
+  <div class="m-head">
+    <button type="button" class="back" data-go="mapa"><svg class="ico" aria-hidden="true"><use href="#i-mapa"/></svg>Mapa</button>
+    <p class="eyebrow">Missão 3 de 6</p>
+    <h2 class="m-title" id="t-m3" tabindex="-1">Sessão e cuidados</h2>
+    <p class="lead">Uma sessão de peeling segue uma ordem. E o cuidado continua depois que você vai para casa.</p>
+    <div class="m-meta" data-meta></div>
+  </div>
+
+  <div class="game" data-game="m3-ordem"></div>
+  <div class="game" data-game="m3-kit"></div>
+
+  <div class="block">
+    <h3>Depois do peeling: o que pode acontecer</h3>
+    <div class="fx-grid">
+      <div class="fx-box fx-ok">
+        <h4><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Pode acontecer</h4>
+        <ul class="tags"><li>Vermelhidão</li><li>Ardor leve</li><li>Sensibilidade</li><li>Descamação</li></ul>
+        <p>A intensidade e o tempo de recuperação variam conforme a técnica.</p>
+      </div>
+      <div class="fx-box fx-alert">
+        <h4><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>Procure avaliação profissional</h4>
+        <ul class="tags"><li>Dor importante</li><li>Bolhas</li><li>Secreção</li><li>Piora progressiva</li></ul>
+        <p>Esses sinais pedem contato com o serviço responsável.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="game" data-game="m3-alerta"></div>
+  <div class="m-end" data-end="m3"></div>
+</section>
+
+<!-- ============ MISSÃO 4 ============ -->
+<section class="view mission" id="v-m4" hidden aria-labelledby="t-m4">
+  <div class="m-head">
+    <button type="button" class="back" data-go="mapa"><svg class="ico" aria-hidden="true"><use href="#i-mapa"/></svg>Mapa</button>
+    <p class="eyebrow">Missão 4 de 6</p>
+    <h2 class="m-title" id="t-m4" tabindex="-1">Microagulhamento</h2>
+    <p class="lead">Técnica que usa um dispositivo com microagulhas para criar microperfurações controladas na pele. Indicação e parâmetros são definidos por profissional após avaliação.</p>
+    <div class="m-meta" data-meta></div>
+  </div>
+
+  <div class="game" data-game="m4-quadros" data-mode="panel">
+    <p class="g-hint">Toque em 1, 2 e 3 para ver o que acontece na pele.</p>
+    <svg class="frames-svg" viewBox="0 0 320 170" aria-hidden="true">
+      <defs><clipPath id="clipFrames"><rect width="320" height="170" rx="18"/></clipPath></defs>
+      <g clip-path="url(#clipFrames)">
+        <rect width="320" height="170" fill="#FBF4FB"/>
+        <path d="M0 54c40-10 70 8 110 0s80-10 120 0 60 8 90 0V102H0z" fill="#FCE3EC"/>
+        <rect y="102" width="320" height="68" fill="#F5C9DA"/>
+        <path d="M0 54c40-10 70 8 110 0s80-10 120 0 60 8 90 0" fill="none" stroke="#fff" stroke-width="3"/>
+        <g fill="#fff" opacity=".6"><ellipse cx="30" cy="80" rx="11" ry="4.5"/><ellipse cx="80" cy="88" rx="11" ry="4.5"/><ellipse cx="130" cy="79" rx="11" ry="4.5"/><ellipse cx="180" cy="88" rx="11" ry="4.5"/><ellipse cx="230" cy="79" rx="11" ry="4.5"/><ellipse cx="282" cy="87" rx="11" ry="4.5"/></g>
+        <g class="fr fr-f1">
+          <rect x="200" y="12" width="56" height="26" rx="13" fill="#EDE3F8" stroke="#6A3D9A" stroke-width="3"/>
+          <g stroke="#6A3D9A" stroke-width="2.2" stroke-linecap="round"><path d="M212 17v16M222 17v16M232 17v16M242 17v16"/></g>
+          <path d="M256 25h10l12-12" fill="none" stroke="#6A3D9A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M278 13 296 -8" stroke="#C92C66" stroke-width="9" stroke-linecap="round"/>
+          <g stroke="#A3204F" stroke-width="2.6" stroke-linecap="round"><path d="M30 58v16M50 59v16M70 59v16M90 58v16M110 56v16M130 55v16M150 56v16M170 57v16M190 58v16"/></g>
+        </g>
+        <g class="fr fr-f2">
+          <g fill="#C92C66" opacity=".2"><circle cx="30" cy="66" r="10"/><circle cx="50" cy="67" r="10"/><circle cx="70" cy="67" r="10"/><circle cx="90" cy="66" r="10"/><circle cx="110" cy="64" r="10"/><circle cx="130" cy="63" r="10"/><circle cx="150" cy="64" r="10"/><circle cx="170" cy="65" r="10"/><circle cx="190" cy="66" r="10"/></g>
+          <g fill="#fff" stroke="#C92C66" stroke-width="2"><circle cx="30" cy="66" r="3.5"/><circle cx="50" cy="67" r="3.5"/><circle cx="70" cy="67" r="3.5"/><circle cx="90" cy="66" r="3.5"/><circle cx="110" cy="64" r="3.5"/><circle cx="130" cy="63" r="3.5"/><circle cx="150" cy="64" r="3.5"/><circle cx="170" cy="65" r="3.5"/><circle cx="190" cy="66" r="3.5"/></g>
+          <g fill="#9B6BD1"><circle cx="44" cy="120" r="4"/><circle cx="98" cy="132" r="4"/><circle cx="150" cy="118" r="4"/><circle cx="204" cy="134" r="4"/><circle cx="258" cy="122" r="4"/></g>
+          <g fill="none" stroke="#9B6BD1" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 5"><path d="M44 114V84M98 126V86M150 112V82M204 128V88"/></g>
+        </g>
+        <g class="fr fr-f3">
+          <g fill="none" stroke-width="2.6" stroke-linecap="round"><path stroke="#C92C66" d="M0 116c30-8 50 8 80 0s50-8 80 0 50 8 80 0 50-8 80 0"/><path stroke="#9B6BD1" d="M0 130c30-8 50 8 80 0s50-8 80 0 50 8 80 0 50-8 80 0"/><path stroke="#C92C66" d="M0 144c30-8 50 8 80 0s50-8 80 0 50 8 80 0 50-8 80 0"/><path stroke="#9B6BD1" d="M0 158c30-8 50 8 80 0s50-8 80 0 50 8 80 0 50-8 80 0"/></g>
+          <path class="twinkle" d="M60 14l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" fill="#E8A33A"/>
+          <path class="twinkle" style="animation-delay:.6s" d="M160 8l1.6 4.8 4.8 1.6-4.8 1.6-1.6 4.8-1.6-4.8-4.8-1.6 4.8-1.6z" fill="#C92C66"/>
+          <path class="twinkle" style="animation-delay:1.2s" d="M250 18l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" fill="#E8A33A"/>
+        </g>
+      </g>
+    </svg>
+    <div class="fbtns">
+      <button type="button" class="fbtn" data-spot="f1" aria-pressed="false"><b>1</b>Microperfurações</button>
+      <button type="button" class="fbtn" data-spot="f2" aria-pressed="false"><b>2</b>Reparação</button>
+      <button type="button" class="fbtn" data-spot="f3" aria-pressed="false"><b>3</b>Remodelação</button>
+    </div>
+    <div class="x-panel" aria-live="polite">
+      <p data-detail="none">Comece pelo quadro 1.</p>
+      <p data-detail="f1" hidden><strong>Microperfurações.</strong> O dispositivo com microagulhas cria microperfurações controladas na pele.</p>
+      <p data-detail="f2" hidden><strong>Reparação.</strong> O organismo responde com um processo de reparação.</p>
+      <p data-detail="f3" hidden><strong>Remodelação.</strong> Essa resposta pode estimular a produção de colágeno e elastina e a remodelação da pele.</p>
+    </div>
+    <p class="x-prog"></p>
+  </div>
+
+  <div class="block">
+    <h3>Dispositivos</h3>
+    <div class="devices">
+      <div class="device">
+        <svg class="ill" aria-hidden="true"><use href="#ill-caneta"/></svg>
+        <h4>Caneta elétrica</h4>
+        <p>Dispositivo motorizado que usa um cartucho de agulhas de uso individual.</p>
+      </div>
+      <div class="device">
+        <svg class="ill" aria-hidden="true"><use href="#ill-roller"/></svg>
+        <h4>Roller</h4>
+        <p>Cilindro com agulhas que é deslocado sobre a pele. Também exige avaliação, técnica adequada e material apropriado.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Para que costuma ser indicado</h3>
+    <ul class="checklist">
+      <li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Textura e qualidade da pele</li>
+      <li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Cicatrizes de acne e poros dilatados</li>
+      <li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Manchas e melasma (associado a ativos)</li>
+      <li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Estrias</li>
+      <li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Flacidez e perda de firmeza</li>
+      <li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Produção de colágeno e elastina</li>
+    </ul>
+    <p class="muted small">Indicação e resultado variam de pessoa para pessoa e dependem de avaliação.</p>
+  </div>
+
+  <div class="game" data-game="m4-areas" data-mode="panel">
+    <p class="g-hint">Toque nos pontos que piscam.</p>
+    <div class="areas">
+      <svg viewBox="0 0 320 260" aria-hidden="true">
+        <path d="M40 262C48 206 98 184 134 178h52c36 6 86 28 94 84z" fill="#F6CFDD"/>
+        <path d="M140 132v44c12 10 28 10 40 0v-44z" fill="#F1BFD2"/>
+        <ellipse cx="160" cy="84" rx="46" ry="56" fill="#F9DCE6"/>
+        <path d="M112 92c-6-46 22-70 48-70 30 0 56 22 50 72-6-26-22-40-50-40-26 0-42 12-48 38z" fill="#6B3A5C"/>
+        <path d="M118 62c26-16 58-16 84 0" fill="none" stroke="#C92C66" stroke-width="8" stroke-linecap="round"/>
+        <path d="M137 89q6 5 12 0M171 89q6 5 12 0" fill="none" stroke="#3A1F47" stroke-width="2.6" stroke-linecap="round"/>
+        <circle cx="134" cy="103" r="7" fill="#F5A9C4" opacity=".7"/><circle cx="186" cy="103" r="7" fill="#F5A9C4" opacity=".7"/>
+        <path d="M151 112q9 7 18 0" fill="none" stroke="#3A1F47" stroke-width="2.6" stroke-linecap="round"/>
+        <g fill="#F9DCE6" stroke="#EDB7CB" stroke-width="2">
+          <rect x="30" y="104" width="44" height="48" rx="18"/>
+          <rect x="30" y="72" width="10" height="42" rx="5"/><rect x="42" y="64" width="10" height="48" rx="5"/><rect x="54" y="66" width="10" height="46" rx="5"/><rect x="66" y="76" width="9" height="38" rx="4.5"/>
+          <rect x="246" y="104" width="44" height="48" rx="18"/>
+          <rect x="280" y="72" width="10" height="42" rx="5"/><rect x="268" y="64" width="10" height="48" rx="5"/><rect x="256" y="66" width="10" height="46" rx="5"/><rect x="245" y="76" width="9" height="38" rx="4.5"/>
+        </g>
+        <path class="twinkle" d="M232 30l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" fill="#E8A33A"/>
+        <path class="twinkle" style="animation-delay:.8s" d="M92 196l1.6 4.8 4.8 1.6-4.8 1.6-1.6 4.8-1.6-4.8-4.8-1.6 4.8-1.6z" fill="#C92C66"/>
+      </svg>
+      <button type="button" class="hs" data-spot="rosto" style="left:50%;top:36%" aria-label="Área 1"><span class="hs-ring"><svg class="ico" aria-hidden="true"><use href="#i-plus"/></svg></span><span class="hs-label" hidden>Rosto</span></button>
+      <button type="button" class="hs" data-spot="pescoco" style="left:50%;top:60%" aria-label="Área 2"><span class="hs-ring"><svg class="ico" aria-hidden="true"><use href="#i-plus"/></svg></span><span class="hs-label" hidden>Pescoço</span></button>
+      <button type="button" class="hs" data-spot="colo" style="left:50%;top:84%" aria-label="Área 3"><span class="hs-ring"><svg class="ico" aria-hidden="true"><use href="#i-plus"/></svg></span><span class="hs-label" hidden>Colo</span></button>
+      <button type="button" class="hs" data-spot="maos" style="left:16%;top:46%" aria-label="Área 4"><span class="hs-ring"><svg class="ico" aria-hidden="true"><use href="#i-plus"/></svg></span><span class="hs-label" hidden>Mãos</span></button>
+      <button type="button" class="hs" data-spot="maos" style="left:84%;top:46%" aria-label="Área 4"><span class="hs-ring"><svg class="ico" aria-hidden="true"><use href="#i-plus"/></svg></span><span class="hs-label" hidden>Mãos</span></button>
+    </div>
+    <div class="x-panel" aria-live="polite">
+      <p data-detail="none">São quatro áreas. Encontre todas.</p>
+      <p data-detail="rosto" hidden><strong>Rosto.</strong> A área mais conhecida, por exemplo para textura, poros e cicatrizes de acne.</p>
+      <p data-detail="pescoco" hidden><strong>Pescoço.</strong> Uma pele mais fina, que também recebe sol todos os dias.</p>
+      <p data-detail="colo" hidden><strong>Colo.</strong> A região do peito logo abaixo do pescoço, bastante exposta ao sol.</p>
+      <p data-detail="maos" hidden><strong>Mãos.</strong> Ficam expostas no dia a dia e também mostram sinais do tempo.</p>
+    </div>
+    <p class="x-prog"></p>
+  </div>
+
+  <div class="block">
+    <h3>Etapas gerais de uma sessão</h3>
+    <ol class="steps">
+      <li><span><strong>Avaliar</strong><span>A pele e o histórico de saúde, para ver se a técnica é apropriada para o caso.</span></span></li>
+      <li><span><strong>Preparar</strong><span>Higienizar a pele e preparar a área.</span></span></li>
+      <li><span><strong>Organizar o material</strong><span>Material adequado e estéril, em condições de higiene.</span></span></li>
+      <li><span><strong>Aplicar</strong><span>Aplicação controlada do dispositivo, conforme o plano individual.</span></span></li>
+      <li><span><strong>Orientar e acompanhar</strong><span>Cuidados posteriores e acompanhamento da evolução.</span></span></li>
+    </ol>
+  </div>
+
+  <div class="block">
+    <h3>Segurança e possíveis riscos</h3>
+    <p class="callout violet"><svg class="ico" aria-hidden="true"><use href="#i-caneta"/></svg><span><strong>Uso único é uso único</strong>Agulhas e cartuchos de uso único não devem ser compartilhados nem reutilizados.</span></p>
+    <p class="callout"><svg class="ico" aria-hidden="true"><use href="#i-frasco"/></svg><span><strong>Alerta da Anvisa</strong>Cosméticos de uso tópico não são automaticamente apropriados para aplicação através de microperfurações. O produto precisa estar regularizado para a finalidade e a via de uso.</span></p>
+    <p class="callout alert"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><span><strong>Riscos possíveis</strong>Irritação, infecção, alterações de pigmentação (manchas) ou cicatrizes. A avaliação considera a pele, o histórico de saúde, infecções ativas e outros fatores individuais.</span></p>
+  </div>
+
+  <div class="game" data-game="m4-certo"></div>
+  <div class="m-end" data-end="m4"></div>
+</section>
+
+<!-- ============ MISSÃO 5 ============ -->
+<section class="view mission" id="v-m5" hidden aria-labelledby="t-m5">
+  <div class="m-head">
+    <button type="button" class="back" data-go="mapa"><svg class="ico" aria-hidden="true"><use href="#i-mapa"/></svg>Mapa</button>
+    <p class="eyebrow">Missão 5 de 6</p>
+    <h2 class="m-title" id="t-m5" tabindex="-1">Lado a lado</h2>
+    <p class="lead">Peeling e microagulhamento, frente a frente. Leia a tabela e depois encare o duelo.</p>
+    <div class="m-meta" data-meta></div>
+  </div>
+
+  <div class="block">
+    <h3>Como comparar</h3>
+    <div class="table-wrap">
+      <table class="cmp">
+        <thead><tr><th scope="col"><span class="sr-only">Critério</span></th><th scope="col" class="th-p">Peeling</th><th scope="col" class="th-m">Microagulhamento</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Como age</th><td data-l="Peeling">Renovação controlada por ação física, química ou enzimática.</td><td data-l="Microagulhamento">Microperfurações controladas feitas por dispositivo com agulhas.</td></tr>
+          <tr><th scope="row">Principal objetivo</th><td data-l="Peeling">Remover células superficiais e uniformizar a pele.</td><td data-l="Microagulhamento">Estimular o colágeno e a remodelação da pele.</td></tr>
+          <tr><th scope="row">Profundidade</th><td data-l="Peeling">Superficial, média ou profunda, conforme a técnica.</td><td data-l="Microagulhamento">Varia conforme o tamanho das agulhas e os parâmetros.</td></tr>
+          <tr><th scope="row">Resultados comuns</th><td data-l="Peeling">Melhora de manchas, oleosidade e textura.</td><td data-l="Microagulhamento">Melhora de textura, poros, cicatrizes e firmeza.</td></tr>
+          <tr><th scope="row">Recuperação</th><td data-l="Peeling">Varia conforme a profundidade.</td><td data-l="Microagulhamento">Costuma ser mais curta, mas também varia.</td></tr>
+          <tr><th scope="row">Possíveis efeitos</th><td data-l="Peeling">Sensibilidade, vermelhidão, descamação e alterações de pigmentação.</td><td data-l="Microagulhamento">Irritação, infecção, alterações de pigmentação e cicatrizes.</td></tr>
+          <tr><th scope="row">Quem define</th><td data-l="Peeling">Profissional habilitado, após avaliação.</td><td data-l="Microagulhamento">Profissional habilitado, após avaliação.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="callout violet"><svg class="ico" aria-hidden="true"><use href="#i-versus"/></svg><span><strong>Podem ser combinados?</strong>Em muitos casos, sim, sempre com avaliação profissional.</span></p>
+  </div>
+
+  <div class="game" data-game="m5-duelo"></div>
+  <div class="m-end" data-end="m5"></div>
+</section>
+
+<!-- ============ MISSÃO 6 ============ -->
+<section class="view mission" id="v-m6" hidden aria-labelledby="t-m6">
+  <div class="m-head">
+    <button type="button" class="back" data-go="mapa"><svg class="ico" aria-hidden="true"><use href="#i-mapa"/></svg>Mapa</button>
+    <p class="eyebrow">Missão 6 de 6</p>
+    <h2 class="m-title" id="t-m6" tabindex="-1">Pergunte antes</h2>
+    <p class="lead">Antes de marcar qualquer procedimento, vale levar algumas perguntas. Monte o seu roteiro e treine o olhar para os sinais de um atendimento cuidadoso.</p>
+    <div class="m-meta" data-meta></div>
+  </div>
+
+  <div class="game" data-game="m6-roteiro">
+    <p class="g-hint">Marque as perguntas que você levaria para a consulta. Com 3 marcadas, o roteiro fica pronto.</p>
+    <ul class="checks">
+      <li><input type="checkbox" id="q-quem"><label for="q-quem" data-q="Quem fará o procedimento e qual é a habilitação dessa pessoa?">Quem fará o procedimento e qual é a habilitação dessa pessoa?</label></li>
+      <li><input type="checkbox" id="q-prod"><label for="q-prod" data-q="Quais produtos e dispositivos serão usados?">Quais produtos e dispositivos serão usados?</label></li>
+      <li><input type="checkbox" id="q-riscos"><label for="q-riscos" data-q="Quais são os riscos, as alternativas e os cuidados depois?">Quais são os riscos, as alternativas e os cuidados depois?</label></li>
+      <li><input type="checkbox" id="q-contato"><label for="q-contato" data-q="Como entro em contato se surgir uma reação inesperada?">Como entro em contato se surgir uma reação inesperada?</label></li>
+      <li><input type="checkbox" id="q-uso"><label for="q-uso" data-q="As agulhas ou o cartucho são de uso único?">As agulhas ou o cartucho são de uso único? <span class="tag">segurança</span></label></li>
+      <li><input type="checkbox" id="q-reg"><label for="q-reg" data-q="O produto aplicado é regularizado para essa finalidade e via de uso?">O produto aplicado é regularizado para essa finalidade e via de uso? <span class="tag">Anvisa</span></label></li>
+    </ul>
+    <div class="btn-row">
+      <button type="button" class="btn copy-roteiro"><svg class="ico" aria-hidden="true"><use href="#i-copiar"/></svg>Copiar meu roteiro</button>
+      <span class="c-status" aria-live="polite"></span>
+    </div>
+    <textarea class="copy-fallback" hidden readonly aria-label="Seu roteiro para copiar"></textarea>
+    <p class="x-prog"></p>
+  </div>
+
+  <div class="game" data-game="m6-sinais"></div>
+  <div class="m-end" data-end="m6"></div>
+</section>
+
+<!-- ============ DESAFIO FINAL ============ -->
+<section class="view mission" id="v-final" hidden aria-labelledby="t-final">
+  <div class="m-head">
+    <button type="button" class="back" data-go="mapa"><svg class="ico" aria-hidden="true"><use href="#i-mapa"/></svg>Mapa</button>
+    <p class="eyebrow">Chegada</p>
+    <h2 class="m-title" id="t-final" tabindex="-1">Desafio final</h2>
+    <p class="lead">Oito perguntas que misturam tudo o que você viu na trilha. Cada acerto vale 15 brilhos.</p>
+    <div class="m-meta" data-meta></div>
+  </div>
+
+  <div class="game" data-game="final-quiz"></div>
+  <div class="m-end" data-end="final"></div>
+
+  <div class="passport" id="passport">
+    <div class="pp-head"><svg class="lumi" aria-hidden="true"><use href="#lumi"/></svg><div><p class="mini-label">Cartão</p><h3>Pele Consciente</h3></div></div>
+    <div class="field">
+      <label for="nome">Seu nome (opcional, fica só neste aparelho)</label>
+      <input id="nome" type="text" maxlength="40" autocomplete="off" placeholder="Como você quer aparecer no cartão">
+    </div>
+    <div class="pp-stats">
+      <div class="pp-stat"><b id="pp-pts">0</b><span>brilhos</span></div>
+      <div class="pp-stat"><b id="pp-lvl">Superfície</b><span>nível</span></div>
+      <div class="pp-stat"><b id="pp-selos">0/7</b><span>selos</span></div>
+    </div>
+    <div class="pp-selos" id="pp-selos-grid"></div>
+    <div class="btn-row">
+      <button type="button" class="btn" id="copy-cartao"><svg class="ico" aria-hidden="true"><use href="#i-copiar"/></svg>Copiar meu resultado</button>
+      <span class="c-status" id="cartao-status" aria-live="polite"></span>
+    </div>
+    <textarea class="copy-fallback" id="cartao-fallback" hidden readonly aria-label="Seu resultado para copiar"></textarea>
+  </div>
+
+  <div class="block">
+    <h3>Fontes para continuar lendo</h3>
+    <ul class="sources">
+      <li>ANVISA. Diferenças entre cosméticos e outros produtos.</li>
+      <li>ANVISA. Estética com segurança: operação fiscaliza clínicas de estética. 2025.</li>
+      <li>SBD. Peelings químicos.</li>
+      <li>Ferreira AS, Aita DL, Muneratto MA. Microagulhamento: uma revisão. Rev Bras Cir Plást. 2020;35(2):228-234. DOI: <a href="https://doi.org/10.5935/2177-1235.2020RBCP0037" target="_blank" rel="noopener">10.5935/2177-1235.2020RBCP0037</a></li>
+    </ul>
+    <p class="muted small">Material educativo introdutório. Não ensina a executar procedimentos e não substitui avaliação profissional.</p>
+  </div>
+</section>
+</main>
+
+<footer class="site-credit">
+  <svg class="ico" aria-hidden="true"><use href="#i-spark"/></svg>
+  <p>Site idealizado, planejado e desenvolvido por <span class="credit-name">Cybele França Brito</span></p>
+</footer>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modal-t">
+  <div class="modal-card">
+    <button type="button" class="modal-x" data-close aria-label="Fechar"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></button>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+<canvas class="fx" id="fx" hidden aria-hidden="true"></canvas>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+const KEY = 'camada-a-camada:v1';
+const BONUS = 25;
+const PRAISE = ['Isso!', 'Acertou!', 'Mandou bem!', 'Exato!', 'Perfeito!'];
+
+/* ---------- Missões ---------- */
+const MISSIONS = [
+  {id:'m1', n:1, title:'O que são?', min:3, selo:'Detetive da Pele', icon:'i-lupa', games:['m1-quem']},
+  {id:'m2', n:2, title:'Peeling', min:4, selo:'Renovação', icon:'i-camadas', games:['m2-tecnicas','m2-camadas','m2-qual']},
+  {id:'m3', n:3, title:'Sessão e cuidados', min:5, selo:'Escudo Solar', icon:'i-escudo', games:['m3-ordem','m3-kit','m3-alerta']},
+  {id:'m4', n:4, title:'Microagulhamento', min:5, selo:'Uso Único', icon:'i-roller', games:['m4-quadros','m4-areas','m4-certo']},
+  {id:'m5', n:5, title:'Lado a lado', min:3, selo:'Lado a Lado', icon:'i-versus', games:['m5-duelo']},
+  {id:'m6', n:6, title:'Pergunte antes', min:3, selo:'Boa Pergunta', icon:'i-pergunta', games:['m6-roteiro','m6-sinais']},
+  {id:'final', n:7, title:'Desafio final', min:4, selo:'Pele Consciente', icon:'i-medalha', games:['final-quiz']}
+];
+const NODE_POS = {m1:[100,105], m2:[290,205], m3:[110,315], m4:[290,425], m5:[110,530], m6:[290,630], final:[200,712]};
+const LEVELS = [{name:'Superfície', at:0}, {name:'Epiderme', at:.2}, {name:'Derme', at:.45}, {name:'Brilho Total', at:.75}];
+
+/* ---------- Jogos ---------- */
+const GAMES = {
+  'm1-quem': {type:'quiz', title:'Quem é quem?', hint:'Leia cada frase e diga a quem ela pertence.', label:'Frase',
+    opts:['Peeling','Microagulhamento','Os dois'], tones:['p','m','b'], pts:10, items:[
+    {q:'Usa um dispositivo com microagulhas.', a:1, why:'As microagulhas são a marca do microagulhamento. Elas criam microperfurações controladas na pele.'},
+    {q:'Pode ser físico, químico ou enzimático.', a:0, why:'Essas são as técnicas de peeling: ação física, substâncias como ácidos ou enzimas.'},
+    {q:'Precisa de avaliação individual antes.', a:2, why:'Nos dois casos a indicação depende de avaliação. Nenhum procedimento é adequado para todas as pessoas.'},
+    {q:'Cria microperfurações controladas na pele.', a:1, why:'A pele responde com um processo de reparação, que pode estimular a remodelação.'},
+    {q:'Usa substâncias como ácidos para renovar a pele.', a:0, why:'Esse é o peeling químico, que provoca uma renovação controlada.'},
+    {q:'Pode deixar a pele avermelhada e sensível.', a:2, why:'Vermelhidão e sensibilidade podem aparecer nos dois. A intensidade varia de pessoa para pessoa.'},
+    {q:'Pode ser feito com caneta elétrica ou roller.', a:1, why:'Caneta elétrica e roller são os dispositivos do microagulhamento.'},
+    {q:'É classificado em superficial, médio ou profundo.', a:0, why:'Os peelings químicos são classificados pela profundidade de ação.'}
+  ]},
+  'm2-tecnicas': {type:'explore', title:'Três técnicas de peeling', spots:['fisico','quimico','enzimatico'], pts:5},
+  'm2-camadas': {type:'explore', title:'Até onde ele chega?', spots:['sup','med','prof'], pts:5},
+  'm2-qual': {type:'quiz', title:'Qual é a técnica?', hint:'Leia a pista e escolha a técnica de peeling.', label:'Pista',
+    opts:['Físico ou mecânico','Químico','Enzimático'], pts:10, items:[
+    {q:'Usa enzimas e costuma ser uma opção mais suave.', a:2, why:'O peeling enzimático usa enzimas que auxiliam na renovação da pele.'},
+    {q:'Usa uma ação física para ajudar a remover células da superfície.', a:0, why:'No peeling físico ou mecânico, a intensidade depende do método empregado.'},
+    {q:'Usa substâncias como ácidos e pode ser superficial, médio ou profundo.', a:1, why:'O peeling químico é classificado pela profundidade de ação.'},
+    {q:'Quem decide a técnica e a intensidade do peeling?', opts:['O profissional, depois da avaliação','Um tutorial da internet','Quem já fez e gostou'], a:0, why:'A escolha depende da avaliação da pele, da saúde e dos objetivos de cada pessoa.'}
+  ]},
+  'm3-ordem': {type:'order', title:'Monte a sessão de peeling', hint:'Toque nos passos na ordem em que costumam acontecer.', steps:[
+    {t:'Avaliação', d:'Conversa sobre objetivo, saúde, tipo de pele, alergias, medicamentos e cuidados recentes.', icon:'i-clip', hint:'Tudo começa pela conversa sobre você e sua pele.'},
+    {t:'Planejamento', d:'Escolha da técnica e dos ativos, com explicação de benefícios possíveis, limites, riscos e cuidados.', icon:'i-plano', hint:'Antes de aplicar, é preciso escolher a técnica.'},
+    {t:'Aplicação', d:'Feita por profissional habilitado, com técnica e produto selecionados para a pessoa.', icon:'i-pincel', hint:'A aplicação só vem depois de avaliar e planejar.'},
+    {t:'Orientações', d:'Cuidados após a sessão, próxima avaliação e quando procurar o serviço.', icon:'i-falar', hint:'As orientações fecham a sessão.'}
+  ]},
+  'm3-kit': {type:'pick', title:'Kit pós-peeling', hint:'Toque no que entra na sua rotina depois do peeling. Depois, confira.', pts:5, items:[
+    {t:'Protetor solar todos os dias', ok:true, icon:'i-protetor', why:'Uso diário de protetor solar é um dos cuidados centrais.'},
+    {t:'Maquiagem logo no primeiro dia', ok:false, icon:'i-batom', why:'O recomendado é evitar maquiagem nos primeiros dias.'},
+    {t:'Hidratação da pele', ok:true, icon:'i-gota', why:'Manter a pele hidratada faz parte dos cuidados.'},
+    {t:'Tomar sol para acelerar a descamação', ok:false, icon:'i-sol', why:'Evite exposição solar enquanto a pele se renova.'},
+    {t:'Chapéu e sombra', ok:true, icon:'i-chapeu', why:'Ajudam a evitar a exposição solar.'},
+    {t:'Ácido caseiro para acelerar', ok:false, icon:'i-frasco', why:'Não tente reproduzir peelings com receitas caseiras ou ácidos concentrados.'},
+    {t:'Seguir as orientações do profissional', ok:true, icon:'i-profissional', why:'As orientações valem para o seu caso. Na dúvida, fale com o serviço.'},
+    {t:'Repetir o peeling em casa com um tutorial', ok:false, icon:'i-celular', why:'Tutoriais não substituem avaliação nem técnica profissional.'}
+  ]},
+  'm3-alerta': {type:'quiz', title:'Pode acontecer ou é alerta?', hint:'Imagine que estes sinais apareceram depois de um peeling.', label:'Situação',
+    opts:['Pode acontecer','Sinal de alerta'], tones:['ok','alert'], pts:10, items:[
+    {q:'No dia seguinte, a pele está avermelhada.', a:0, why:'Vermelhidão é um efeito possível. A intensidade varia conforme a técnica.'},
+    {q:'Apareceram bolhas na área tratada.', a:1, why:'Bolhas precisam de avaliação profissional. Procure o serviço responsável.'},
+    {q:'A pele começou a soltar pelinhas finas.', a:0, why:'Descamação é um dos efeitos possíveis. Siga as orientações recebidas.'},
+    {q:'Sai uma secreção da área tratada.', a:1, why:'Secreção é sinal de alerta. Procure avaliação profissional.'},
+    {q:'Sente um ardor leve ao lavar o rosto.', a:0, why:'Ardor leve pode acontecer. Se aumentar ou não passar, fale com o serviço.'},
+    {q:'A dor está forte e não melhora.', a:1, why:'Dor importante precisa de avaliação profissional.'},
+    {q:'A pele está mais sensível ao toque.', a:0, why:'Sensibilidade é um dos efeitos possíveis.'},
+    {q:'A cada dia a área parece pior.', a:1, why:'Piora progressiva é sinal de alerta. Procure o serviço responsável.'}
+  ]},
+  'm4-quadros': {type:'explore', title:'Como funciona, em 3 quadros', spots:['f1','f2','f3'], pts:5},
+  'm4-areas': {type:'explore', title:'Encontre as 4 áreas mais comuns', spots:['rosto','pescoco','colo','maos'], pts:5},
+  'm4-certo': {type:'quiz', title:'Certo ou errado?', hint:'Tudo aqui é sobre segurança no microagulhamento.', label:'Afirmação',
+    opts:['Certo','Errado'], tones:['ok','alert'], pts:10, items:[
+    {q:'O cartucho de agulhas pode ser usado em outra pessoa se for bem limpo.', a:1, why:'Agulhas e cartuchos de uso único não devem ser compartilhados nem reutilizados.'},
+    {q:'Infecção ativa na pele é um dos fatores considerados na avaliação.', a:0, why:'A avaliação considera a pele, o histórico de saúde, infecções ativas e outros fatores individuais.'},
+    {q:'Qualquer creme de uso tópico pode ser aplicado sobre as microperfurações.', a:1, why:'A Anvisa alerta: o produto precisa estar regularizado para essa finalidade e via de uso.'},
+    {q:'O roller também exige avaliação, técnica adequada e material apropriado.', a:0, why:'Mesmo sendo manual, o roller pede os mesmos cuidados.'},
+    {q:'Microagulhamento não tem riscos.', a:1, why:'Podem ocorrer irritação, infecção, alterações de pigmentação ou cicatrizes.'},
+    {q:'O dispositivo e os parâmetros são escolhidos pelo profissional após avaliação.', a:0, why:'Indicação e parâmetros dependem de cada caso.'},
+    {q:'O material usado precisa ser adequado e estéril.', a:0, why:'Higiene e material estéril fazem parte das etapas gerais da sessão.'}
+  ]},
+  'm5-duelo': {type:'quiz', title:'Duelo: peeling ou microagulhamento?', hint:'Uma característica por vez. De quem é?', label:'Característica',
+    opts:['Peeling','Microagulhamento'], tones:['p','m'], pts:10, items:[
+    {q:'Principal objetivo: remover células superficiais e uniformizar a pele.', a:0, why:'O peeling promove a renovação controlada da superfície.'},
+    {q:'Principal objetivo: estimular colágeno e a remodelação da pele.', a:1, why:'A resposta de reparação às microperfurações pode estimular a remodelação.'},
+    {q:'A profundidade varia conforme o tamanho das agulhas.', a:1, why:'No microagulhamento, dispositivo e parâmetros são escolhidos após avaliação.'},
+    {q:'Pode ser superficial, médio ou profundo.', a:0, why:'Essa classificação é do peeling químico.'},
+    {q:'Resultados comuns: melhora de manchas, oleosidade e textura.', a:0, why:'São resultados comuns do peeling.'},
+    {q:'Resultados comuns: melhora de textura, poros, cicatrizes e firmeza.', a:1, why:'São resultados comuns do microagulhamento.'},
+    {q:'Os dois podem ser combinados?', opts:['Em muitos casos, sim, com avaliação profissional','Nunca podem ser combinados','Sempre, sem precisar de avaliação'], a:0, why:'A combinação é possível em muitos casos, sempre com avaliação profissional.'}
+  ]},
+  'm6-roteiro': {type:'check', title:'Seu roteiro de perguntas', ids:['q-quem','q-prod','q-riscos','q-contato','q-uso','q-reg'], min:3, pts:5},
+  'm6-sinais': {type:'quiz', title:'Bom sinal ou sinal de atenção?', hint:'Você está conhecendo um lugar para fazer o procedimento. O que você nota?', label:'Cena',
+    opts:['Bom sinal','Sinal de atenção'], tones:['ok','alert'], pts:10, items:[
+    {q:'Antes de tudo, perguntam sobre sua saúde, alergias e medicamentos.', a:0, why:'A avaliação vem primeiro. É ela que mostra se a técnica é apropriada.'},
+    {q:'Oferecem fazer o procedimento na hora, sem nenhuma avaliação.', a:1, why:'Sem avaliação não dá para saber se o procedimento é adequado para você.'},
+    {q:'O cartucho de agulhas é de uso individual.', a:0, why:'Agulhas e cartuchos de uso único não devem ser compartilhados nem reutilizados.'},
+    {q:'Prometem resultado garantido e igual para todo mundo.', a:1, why:'Os resultados variam, e nenhum procedimento é adequado para todas as pessoas.'},
+    {q:'Explicam riscos, alternativas e cuidados depois.', a:0, why:'Entender benefícios, limites e riscos faz parte do planejamento.'},
+    {q:'Sugerem passar um cosmético qualquer sobre as microperfurações.', a:1, why:'O produto precisa estar regularizado para essa finalidade e via de uso.'},
+    {q:'Você recebe um contato para o caso de reação inesperada.', a:0, why:'Saber quem procurar faz parte das orientações depois da sessão.'}
+  ]},
+  'final-quiz': {type:'quiz', title:'Desafio final', hint:'Escolha a melhor resposta. Sem pressa: não tem cronômetro.', label:'Pergunta', pts:15, items:[
+    {q:'Qual procedimento usa microagulhas para criar microperfurações controladas?', opts:['Microagulhamento','Peeling enzimático','Peeling físico'], a:0, why:'O peeling renova a pele por ação física, química ou enzimática. Agulhas são do microagulhamento.'},
+    {q:'Depois de um peeling, qual cuidado é para todos os dias?', opts:['Usar protetor solar','Tomar sol para uniformizar','Usar maquiagem logo no primeiro dia'], a:0, why:'Protetor solar diário e evitar o sol estão entre os cuidados principais.'},
+    {q:'Dias depois do procedimento, surgiram bolhas e secreção. O que fazer?', opts:['Procurar avaliação profissional','Esperar passar sozinho','Passar um ácido para acelerar'], a:0, why:'Bolhas, secreção, dor importante ou piora progressiva precisam de avaliação.'},
+    {q:'Por que o cartucho da caneta elétrica é de uso individual?', opts:['Agulhas de uso único não devem ser compartilhadas nem reutilizadas','Porque perde a cor depois do uso','Não é: pode ser lavado e reutilizado'], a:0, why:'Compartilhar ou reutilizar agulhas aumenta o risco de infecção.'},
+    {q:'Como o peeling químico é classificado?', opts:['Pela profundidade: superficial, médio ou profundo','Pela cor do produto','Pelo tamanho das agulhas'], a:0, why:'Tamanho de agulha é assunto do microagulhamento.'},
+    {q:'Um creme comprado na farmácia pode ser usado durante o microagulhamento?', opts:['Só se for regularizado para essa finalidade e via de uso','Sim, qualquer cosmético serve','Sim, e quanto mais concentrado, melhor'], a:0, why:'Cosméticos de uso tópico não são automaticamente apropriados para microperfurações.'},
+    {q:'Quem pode realizar o procedimento?', opts:['Profissional habilitado','Qualquer pessoa com o kit certo','Quem assistiu a vários tutoriais'], a:0, why:'O procedimento é feito por profissional habilitado, com técnica e produto selecionados para a pessoa.'},
+    {q:'Qual destas é uma boa pergunta antes de marcar?', opts:['Quem fará o procedimento e qual é a sua habilitação?','Dá para pular a avaliação?','Posso repetir em casa sozinho?'], a:0, why:'Saber quem faz e com qual habilitação é o começo de um procedimento seguro.'}
+  ]}
+};
+
+/* ---------- Estado ---------- */
+const blank = () => ({pts:0, got:{}, games:{}, done:{}, found:{}, checks:{}, name:''});
+let S = blank();
+let current = 'mapa';
+function load() { try { const raw = localStorage.getItem(KEY); if (raw) { const d = JSON.parse(raw); if (d && typeof d === 'object') S = Object.assign(blank(), d); } } catch (e) {} }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+function gameMax(id) {
+  const g = GAMES[id];
+  switch (g.type) {
+    case 'quiz': return g.items.length * g.pts;
+    case 'order': return 20;
+    case 'pick': return g.items.length * g.pts;
+    case 'explore': return g.spots.length * g.pts;
+    case 'check': return g.ids.length * g.pts;
+  }
+  return 0;
+}
+const missionMax = m => BONUS + m.games.reduce((a, id) => a + gameMax(id), 0);
+const MAX = MISSIONS.reduce((t, m) => t + missionMax(m), 0);
+function levelOf(p) { let i = 0; LEVELS.forEach((l, k) => { if (p >= Math.ceil(l.at * MAX)) i = k; }); return i; }
+function earned(gid) { let t = 0; for (const k in S.got) { if (k === gid || k.indexOf(gid + ':') === 0) t += S.got[k]; } return t; }
+const missionOf = gid => MISSIONS.find(m => m.games.includes(gid));
+const seloCount = () => MISSIONS.filter(m => S.done[m.id]).length;
+const nextMission = () => MISSIONS.find(m => !S.done[m.id]);
+
+function award(key, n, at) {
+  const prev = S.got[key] || 0;
+  if (n <= prev) return 0;
+  const before = levelOf(S.pts);
+  S.got[key] = n; S.pts += n - prev; save();
+  floatPts(n - prev, at);
+  updateHUD(true);
+  const after = levelOf(S.pts);
+  if (after > before) toast('Subiu de nível: ' + LEVELS[after].name + '!', true);
+  return n - prev;
+}
+
+function gameDone(gid, data) {
+  S.games[gid] = Object.assign({}, S.games[gid], data, {done:true});
+  save();
+  const m = missionOf(gid);
+  if (m && !S.done[m.id] && m.games.every(id => S.games[id] && S.games[id].done)) {
+    S.done[m.id] = true; save();
+    award('bonus:' + m.id, BONUS);
+    setTimeout(() => seloModal(m), 650);
+  }
+  if (m) updateMissionEnd(m.id);
+  updateHUD(); updateMap(); refreshShelves();
+}
+
+/* ---------- Efeitos ---------- */
+function floatPts(n, at) {
+  const el = document.createElement('span');
+  el.className = 'floatpts'; el.textContent = '+' + n + ' ✦';
+  const ref = (at && at.getBoundingClientRect) ? at : $('#hud-pts');
+  const r = ref.getBoundingClientRect();
+  el.style.left = Math.min(innerWidth - 40, Math.max(40, r.left + r.width / 2)) + 'px';
+  el.style.top = Math.max(60, r.top + 8) + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1200);
+}
+let toastT;
+function toast(msg, big) {
+  const t = $('#toast');
+  t.textContent = msg; t.classList.toggle('big', !!big); t.hidden = false;
+  t.classList.remove('show'); void t.offsetWidth; t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => { t.classList.remove('show'); setTimeout(() => { t.hidden = true; }, 300); }, 2800);
+}
+function burst() {
+  if (reduce) return;
+  const c = $('#fx'); const ctx = c.getContext && c.getContext('2d'); if (!ctx) return;
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  c.width = innerWidth * dpr; c.height = innerHeight * dpr; c.hidden = false;
+  const cols = ['#C92C66', '#6A3D9A', '#E8A33A', '#F5BDD2', '#CDB6EA', '#9B6BD1'];
+  const P = Array.from({length: 110}, () => ({
+    x: innerWidth / 2 + (Math.random() - .5) * 60, y: innerHeight * .42,
+    vx: (Math.random() - .5) * 13, vy: -Math.random() * 12 - 3,
+    r: Math.random() * 6 + 4, rot: Math.random() * 6, vr: (Math.random() - .5) * .3,
+    c: cols[Math.floor(Math.random() * cols.length)], star: Math.random() < .6
+  }));
+  const star = r => { ctx.beginPath(); ctx.moveTo(0, -r); ctx.quadraticCurveTo(r * .15, -r * .15, r, 0); ctx.quadraticCurveTo(r * .15, r * .15, 0, r); ctx.quadraticCurveTo(-r * .15, r * .15, -r, 0); ctx.quadraticCurveTo(-r * .15, -r * .15, 0, -r); ctx.fill(); };
+  const t0 = performance.now();
+  function frame(now) {
+    const t = (now - t0) / 1000;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, innerWidth, innerHeight);
+    P.forEach(p => {
+      p.vy += .32; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.globalAlpha = Math.max(0, 1 - t / 2); ctx.fillStyle = p.c;
+      if (p.star) star(p.r); else { ctx.beginPath(); ctx.arc(0, 0, p.r * .45, 0, 7); ctx.fill(); }
+      ctx.restore();
+    });
+    if (t < 2.1) requestAnimationFrame(frame); else { ctx.clearRect(0, 0, innerWidth, innerHeight); c.hidden = true; }
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- Peças reutilizáveis ---------- */
+const head = (g, max, tag) => '<div class="g-head"><span class="g-tag" data-t="' + (tag || 'Jogo') + '">' + (tag || 'Jogo') + '</span><h3>' + esc(g.title) + '</h3><span class="g-pts">até ' + max + ' ✦</span></div>';
+const icon = (id, cls) => '<svg class="ico' + (cls ? ' ' + cls : '') + '" aria-hidden="true"><use href="#' + id + '"/></svg>';
+const seloHTML = (m, on, size) => '<span class="selo' + (on ? ' is-on' : '') + (size ? ' selo-' + size : '') + '" aria-hidden="true">' + icon(m.icon) + '</span>';
+function setTag(root, done) { const t = $('.g-tag', root); if (t) t.textContent = done ? 'Concluído' : (t.dataset.t || 'Jogo'); root.classList.toggle('is-done', !!done); }
+const starsFor = (s, n) => s === n ? 3 : (s / n >= .6 ? 2 : 1);
+function endMsg(s, n) {
+  const f = s / n;
+  if (f === 1) return 'Perfeito! Você acertou tudo.';
+  if (f >= .75) return 'Muito bem! Releia as explicações das que errou.';
+  if (f >= .5) return 'Bom começo. Releia o conteúdo e tente de novo.';
+  return 'Vale reler a missão e jogar de novo. Os brilhos que faltam continuam esperando.';
+}
+
+/* ---------- Quiz ---------- */
+function renderQuiz(root, gid) {
+  const g = GAMES[gid]; const N = g.items.length; const max = N * g.pts;
+  let i = 0, right = 0, streak = 0, order = [];
+  root.innerHTML = head(g, max) + '<p class="g-hint">' + esc(g.hint) + '</p>' +
+    '<div class="q-play"><div class="q-top"><div class="q-dots" aria-hidden="true">' + '<span></span>'.repeat(N) + '</div><span class="q-streak" hidden></span></div>' +
+    '<div class="q-card"><p class="q-count"></p><p class="q-text"></p></div>' +
+    '<div class="q-opts" role="group" aria-label="Opções de resposta"></div>' +
+    '<div class="q-fb" aria-live="polite"></div>' +
+    '<div class="q-next-row"><button type="button" class="btn btn-primary q-next" hidden></button></div></div>' +
+    '<div class="q-end" hidden></div>';
+  const play = $('.q-play', root), end = $('.q-end', root), dots = $$('.q-dots span', root),
+    cnt = $('.q-count', root), txt = $('.q-text', root), opts = $('.q-opts', root),
+    fb = $('.q-fb', root), next = $('.q-next', root), stk = $('.q-streak', root);
+  function itemOpts(it) {
+    if (it.opts) return shuffle(it.opts.map((t, k) => ({t, ok: k === it.a, tone: ''})));
+    return g.opts.map((t, k) => ({t, ok: k === it.a, tone: (g.tones || [])[k] || ''}));
+  }
+  function paint() {
+    const it = g.items[i];
+    dots.forEach((d, k) => d.classList.toggle('cur', k === i));
+    cnt.textContent = (g.label || 'Pergunta') + ' ' + (i + 1) + ' de ' + N;
+    txt.textContent = it.q;
+    order = itemOpts(it);
+    opts.classList.toggle('long', order.some(o => o.t.length > 24));
+    opts.innerHTML = order.map((o, k) => '<button type="button" class="opt' + (o.tone ? ' t-' + o.tone : '') + '" data-k="' + k + '"><span class="dot" aria-hidden="true"></span><span>' + esc(o.t) + '</span></button>').join('');
+    fb.className = 'q-fb'; fb.innerHTML = ''; next.hidden = true;
+  }
+  opts.addEventListener('click', e => {
+    const b = e.target.closest('.opt'); if (!b || b.disabled) return;
+    const k = +b.dataset.k; const ok = order[k].ok; const it = g.items[i];
+    $$('.opt', opts).forEach((x, j) => { x.disabled = true; if (order[j].ok) x.classList.add('is-right'); else if (j === k) x.classList.add('is-wrong'); });
+    dots[i].classList.add(ok ? 'ok' : 'no');
+    if (ok) { right++; streak++; award(gid + ':' + i, g.pts, b); } else streak = 0;
+    stk.hidden = streak < 3; stk.textContent = 'Sequência de ' + streak + ' acertos';
+    const correct = order.find(o => o.ok).t;
+    fb.className = 'q-fb ' + (ok ? 'ok' : 'no');
+    fb.innerHTML = ok ? '<strong>' + pick(PRAISE) + '</strong> ' + esc(it.why) : '<strong>Resposta: ' + esc(correct) + '.</strong> ' + esc(it.why);
+    next.textContent = i < N - 1 ? 'Próxima' : 'Ver resultado';
+    next.hidden = false;
+    next.focus({preventScroll: true});
+    next.scrollIntoView({block: 'nearest', behavior: reduce ? 'auto' : 'smooth'});
+  });
+  next.addEventListener('click', () => {
+    if (i < N - 1) { i++; paint(); const f = $('.opt', opts); if (f) f.focus({preventScroll: true}); }
+    else finish();
+  });
+  function finish() {
+    const best = Math.max((S.games[gid] && S.games[gid].best) || 0, right);
+    gameDone(gid, {best, total: N});
+    showEnd(right);
+  }
+  function showEnd(score) {
+    play.hidden = true; end.hidden = false; setTag(root, true);
+    const best = (S.games[gid] && S.games[gid].best) || score;
+    const st = starsFor(score, N); const got = earned(gid);
+    end.innerHTML = '<div class="stars" role="img" aria-label="' + st + ' de 3 estrelas">' + [0, 1, 2].map(k => '<svg class="' + (k < st ? 'on' : '') + '" aria-hidden="true"><use href="#i-spark"/></svg>').join('') + '</div>' +
+      '<p class="end-score">' + score + ' de ' + N + '</p>' +
+      '<p>' + endMsg(score, N) + (best > score ? ' Seu melhor resultado: ' + best + ' de ' + N + '.' : '') + '</p>' +
+      '<p class="muted small">Brilhos deste jogo: ' + got + ' de ' + max + '. ' + (got < max ? 'Jogue de novo para pegar os que faltam.' : 'Você pegou todos!') + '</p>' +
+      '<button type="button" class="btn q-again">' + icon('i-reset') + 'Jogar de novo</button>';
+    $('.q-again', end).addEventListener('click', () => {
+      i = 0; right = 0; streak = 0; stk.hidden = true;
+      dots.forEach(d => { d.className = ''; });
+      end.hidden = true; play.hidden = false; setTag(root, false); paint();
+      const f = $('.opt', opts); if (f) f.focus({preventScroll: true});
+    });
+  }
+  if (S.games[gid] && S.games[gid].done) showEnd(S.games[gid].best || 0); else paint();
+}
+
+/* ---------- Ordem ---------- */
+function renderOrder(root, gid) {
+  const g = GAMES[gid]; const N = g.steps.length;
+  let nextI = 0, mistakes = 0;
+  root.innerHTML = head(g, 20) + '<p class="g-hint">' + esc(g.hint) + '</p>' +
+    '<ol class="o-slots"></ol><p class="o-label">Qual vem agora?</p><div class="o-pool"></div>' +
+    '<div class="q-fb" aria-live="polite"></div><div class="o-end" hidden></div>';
+  const slotsEl = $('.o-slots', root), pool = $('.o-pool', root), fb = $('.q-fb', root), endB = $('.o-end', root), lbl = $('.o-label', root);
+  const emptySlot = k => '<li class="o-slot"><span class="o-num">' + (k + 1) + '</span><span>Passo ' + (k + 1) + '</span></li>';
+  function fill(k) {
+    const s = g.steps[k]; const sl = slotsEl.children[k];
+    sl.className = 'o-slot filled';
+    sl.innerHTML = '<span class="o-num">' + (k + 1) + '</span><span class="o-body"><strong>' + esc(s.t) + '</strong><span>' + esc(s.d) + '</span></span>';
+  }
+  function start() {
+    nextI = 0; mistakes = 0; setTag(root, false);
+    slotsEl.innerHTML = g.steps.map((_, k) => emptySlot(k)).join('');
+    let ord; do { ord = shuffle(g.steps.map((_, k) => k)); } while (ord.every((v, k) => v === k));
+    pool.innerHTML = ord.map(k => '<button type="button" class="o-tile" data-k="' + k + '">' + icon(g.steps[k].icon, 'ico-lg') + '<span><strong>' + esc(g.steps[k].t) + '</strong><span>' + esc(g.steps[k].d) + '</span></span></button>').join('');
+    pool.hidden = false; lbl.hidden = false; fb.className = 'q-fb'; fb.innerHTML = ''; endB.hidden = true;
+  }
+  pool.addEventListener('click', e => {
+    const b = e.target.closest('.o-tile'); if (!b) return;
+    const k = +b.dataset.k;
+    if (k === nextI) {
+      fill(k); b.remove(); nextI++;
+      fb.className = 'q-fb ok'; fb.innerHTML = '<strong>' + esc(g.steps[k].t) + '</strong> no lugar certo.';
+      if (nextI === N) finish();
+      else { const f = $('.o-tile', pool); if (f) f.focus({preventScroll: true}); }
+    } else {
+      mistakes++;
+      b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
+      fb.className = 'q-fb no'; fb.innerHTML = '<strong>Ainda não.</strong> ' + esc(g.steps[nextI].hint);
+    }
+  });
+  function finish() {
+    const pts = mistakes === 0 ? 20 : (mistakes <= 2 ? 10 : 5);
+    award(gid, pts, slotsEl.lastElementChild);
+    gameDone(gid, {mistakes: Math.min(mistakes, (S.games[gid] && S.games[gid].mistakes != null) ? S.games[gid].mistakes : mistakes)});
+    showEnd(mistakes);
+  }
+  function showEnd(m) {
+    pool.hidden = true; lbl.hidden = true; setTag(root, true);
+    fb.className = 'q-fb ok';
+    fb.innerHTML = m === 0 ? '<strong>Sequência perfeita, sem nenhum erro!</strong> Brilhos deste jogo: ' + earned(gid) + ' de 20.' :
+      '<strong>Sequência completa.</strong> ' + m + ' ' + (m === 1 ? 'tentativa errada' : 'tentativas erradas') + ' no caminho. Brilhos deste jogo: ' + earned(gid) + ' de 20.';
+    endB.hidden = false;
+    endB.innerHTML = '<button type="button" class="btn">' + icon('i-reset') + 'Jogar de novo</button>';
+    $('button', endB).addEventListener('click', start);
+  }
+  if (S.games[gid] && S.games[gid].done) {
+    slotsEl.innerHTML = g.steps.map((_, k) => emptySlot(k)).join('');
+    g.steps.forEach((_, k) => fill(k));
+    showEnd(S.games[gid].mistakes || 0);
+  } else start();
+}
+
+/* ---------- Escolher (kit) ---------- */
+function renderPick(root, gid) {
+  const g = GAMES[gid]; const N = g.items.length; const max = N * g.pts;
+  root.innerHTML = head(g, max) + '<p class="g-hint">' + esc(g.hint) + '</p>' +
+    '<div class="pk-grid">' + g.items.map((it, k) => '<button type="button" class="pk" data-k="' + k + '" aria-pressed="false">' + icon(it.icon, 'pk-ico') + '<span class="pk-t">' + esc(it.t) + '</span><span class="pk-why" hidden>' + esc(it.why) + '</span></button>').join('') + '</div>' +
+    '<div class="btn-row"><button type="button" class="btn btn-primary pk-check" disabled>Conferir</button><span class="pk-count muted small"></span></div>' +
+    '<div class="q-fb" aria-live="polite"></div>';
+  const tiles = $$('.pk', root), check = $('.pk-check', root), fb = $('.q-fb', root), cntEl = $('.pk-count', root);
+  let checked = false;
+  const sel = t => t.getAttribute('aria-pressed') === 'true';
+  function count() {
+    const n = tiles.filter(sel).length;
+    check.disabled = n === 0; cntEl.textContent = n + ' ' + (n === 1 ? 'item escolhido' : 'itens escolhidos');
+  }
+  $('.pk-grid', root).addEventListener('click', e => {
+    const t = e.target.closest('.pk'); if (!t || checked) return;
+    t.setAttribute('aria-pressed', sel(t) ? 'false' : 'true'); count();
+  });
+  check.addEventListener('click', () => { if (checked) reset(); else grade(true); });
+  function grade(live) {
+    checked = true; let right = 0;
+    tiles.forEach((t, k) => {
+      const it = g.items[k]; const ok = sel(t) === it.ok;
+      if (ok) { right++; if (live) award(gid + ':' + k, g.pts, t); }
+      t.classList.add(it.ok ? 'good' : 'bad'); t.classList.toggle('miss', !ok);
+      t.insertAdjacentHTML('afterbegin', '<span class="pk-badge">' + (it.ok ? 'Entra' : 'Fica de fora') + (ok ? '' : ' · você errou') + '</span>');
+      $('.pk-why', t).hidden = false; t.setAttribute('aria-disabled', 'true');
+    });
+    if (live) {
+      fb.className = 'q-fb ' + (right === N ? 'ok' : 'no');
+      fb.innerHTML = '<strong>' + right + ' de ' + N + ' decisões certas.</strong> Verde entra na rotina; vermelho fica de fora. Brilhos deste jogo: ' + earned(gid) + ' de ' + max + '.';
+      gameDone(gid, {best: Math.max((S.games[gid] && S.games[gid].best) || 0, right)});
+    } else {
+      fb.className = 'q-fb ok';
+      fb.innerHTML = '<strong>Gabarito do kit.</strong> Seu melhor resultado: ' + ((S.games[gid] && S.games[gid].best) || 0) + ' de ' + N + '. Brilhos deste jogo: ' + earned(gid) + ' de ' + max + '.';
+    }
+    check.textContent = 'Jogar de novo'; check.disabled = false; cntEl.textContent = '';
+    setTag(root, true);
+  }
+  function reset() {
+    checked = false;
+    tiles.forEach(t => { t.className = 'pk'; t.setAttribute('aria-pressed', 'false'); t.removeAttribute('aria-disabled'); const b = $('.pk-badge', t); if (b) b.remove(); $('.pk-why', t).hidden = true; });
+    fb.className = 'q-fb'; fb.innerHTML = ''; check.textContent = 'Conferir'; setTag(root, false); count();
+  }
+  if (S.games[gid] && S.games[gid].done) {
+    tiles.forEach((t, k) => t.setAttribute('aria-pressed', g.items[k].ok ? 'true' : 'false'));
+    grade(false);
+  } else count();
+}
+
+/* ---------- Descobrir ---------- */
+function initExplore(root, gid) {
+  const g = GAMES[gid]; const max = g.spots.length * g.pts;
+  if (!root.dataset.bound) {
+    root.dataset.bound = '1';
+    root.insertAdjacentHTML('afterbegin', head(g, max, 'Descubra'));
+    root.addEventListener('click', e => {
+      const b = e.target.closest('[data-spot]'); if (!b || !root.contains(b)) return;
+      const key = b.dataset.spot;
+      const f = S.found[gid] || (S.found[gid] = {});
+      const isNew = !f[key]; f[key] = 1; save();
+      root.dataset.active = key; sync();
+      if (isNew) {
+        award(gid + ':' + key, g.pts, b);
+        if (g.spots.every(s => f[s])) gameDone(gid, {});
+      }
+    });
+  }
+  function sync() {
+    const f = S.found[gid] || {}; const act = root.dataset.active || '';
+    $$('[data-spot]', root).forEach(b => {
+      const k = b.dataset.spot;
+      b.classList.toggle('is-found', !!f[k]); b.classList.toggle('is-active', k === act);
+      if (b.hasAttribute('aria-expanded')) b.setAttribute('aria-expanded', f[k] ? 'true' : 'false');
+      if (b.hasAttribute('aria-pressed')) b.setAttribute('aria-pressed', k === act ? 'true' : 'false');
+      const lab = $('.hs-label', b); if (lab) { lab.hidden = !f[k]; b.setAttribute('aria-label', f[k] ? lab.textContent : 'Área escondida'); }
+    });
+    if (root.dataset.mode === 'panel') $$('[data-detail]', root).forEach(d => { d.hidden = d.dataset.detail !== (act || 'none'); });
+    else $$('[data-detail]', root).forEach(d => { d.hidden = !f[d.dataset.detail]; });
+    const n = g.spots.filter(s => f[s]).length; const all = n === g.spots.length;
+    $('.x-prog', root).innerHTML = all ? icon('i-check') + ' Tudo descoberto: ' + max + ' de ' + max + ' ✦' : n + ' de ' + g.spots.length + ' descobertos';
+    setTag(root, all);
+  }
+  root._sync = sync;
+  sync();
+}
+
+/* ---------- Roteiro ---------- */
+function initCheck(root, gid) {
+  const g = GAMES[gid]; const max = g.ids.length * g.pts;
+  const qText = id => { const l = $('label[for="' + id + '"]', root); return l ? (l.dataset.q || l.textContent.trim()) : ''; };
+  if (!root.dataset.bound) {
+    root.dataset.bound = '1';
+    root.insertAdjacentHTML('afterbegin', head(g, max, 'Monte'));
+    root.addEventListener('change', e => {
+      const cb = e.target.closest('input[type="checkbox"]'); if (!cb) return;
+      S.checks[cb.id] = cb.checked; save();
+      if (cb.checked) award(gid + ':' + cb.id, g.pts, cb.closest('li'));
+      sync();
+    });
+    $('.copy-roteiro', root).addEventListener('click', () => {
+      const chosen = g.ids.filter(id => S.checks[id]);
+      const list = (chosen.length ? chosen : g.ids).map(id => '• ' + qText(id));
+      copyText('Minhas perguntas antes do procedimento:\n' + list.join('\n'), $('.c-status', root), $('.copy-fallback', root));
+    });
+  }
+  function sync() {
+    g.ids.forEach(id => { const cb = document.getElementById(id); if (cb) cb.checked = !!S.checks[id]; });
+    const n = g.ids.filter(id => S.checks[id]).length;
+    const ready = n >= g.min;
+    $('.x-prog', root).innerHTML = ready ? icon('i-check') + ' Roteiro pronto com ' + n + ' perguntas.' : n + ' de ' + g.min + ' perguntas para o roteiro ficar pronto';
+    setTag(root, ready);
+    if (ready && !(S.games[gid] && S.games[gid].done)) gameDone(gid, {});
+  }
+  root._sync = sync;
+  sync();
+}
+
+function copyText(text, st, ta) {
+  const fallback = () => { if (ta) { ta.hidden = false; ta.value = text; ta.focus(); ta.select(); } if (st) st.textContent = 'Texto selecionado. Use a opção Copiar do seu aparelho.'; };
+  try {
+    navigator.clipboard.writeText(text).then(() => { if (st) st.textContent = 'Copiado!'; if (ta) ta.hidden = true; }, fallback);
+  } catch (e) { fallback(); }
+  setTimeout(() => { if (st) st.textContent = ''; }, 4000);
+}
+
+function renderGames() {
+  $$('[data-game]').forEach(root => {
+    const gid = root.dataset.game; const g = GAMES[gid]; if (!g) return;
+    if (g.type === 'quiz') renderQuiz(root, gid);
+    else if (g.type === 'order') renderOrder(root, gid);
+    else if (g.type === 'pick') renderPick(root, gid);
+    else if (g.type === 'explore') { delete root.dataset.active; if (root._sync) root._sync(); else initExplore(root, gid); }
+    else if (g.type === 'check') { if (root._sync) root._sync(); else initCheck(root, gid); }
+  });
+}
+
+/* ---------- Mapa ---------- */
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function buildMap() {
+  const r = rng(7); let tex = '';
+  for (let k = 0; k < 26; k++) { const x = 40 + r() * 340, y = 80 + r() * 240; tex += '<ellipse cx="' + x.toFixed(0) + '" cy="' + y.toFixed(0) + '" rx="' + (9 + r() * 6).toFixed(1) + '" ry="' + (4 + r() * 2).toFixed(1) + '" fill="#fff" opacity=".45"/>'; }
+  for (let k = 0; k < 6; k++) { const y = 370 + k * 44; tex += '<path d="M40 ' + y + 'c30-10 50 10 80 0s50-10 80 0 50 10 80 0 50-10 80 0 40 8 60 0" fill="none" stroke="#fff" stroke-width="2" opacity=".4"/>'; }
+  for (let k = 0; k < 7; k++) { tex += '<circle cx="' + (50 + k * 52) + '" cy="' + (678 + (k % 2) * 46) + '" r="' + (14 + (k % 3) * 3) + '" fill="none" stroke="#fff" stroke-width="2" opacity=".4"/>'; }
+  $('#map-tex').innerHTML = tex;
+  let ticks = '';
+  for (let y = 60; y <= 770; y += 20) ticks += '<path d="M0 ' + y + 'h' + (y % 100 === 0 ? 12 : 6) + '" stroke="#fff" stroke-width="2" opacity=".75"/>';
+  $('#map-ticks').innerHTML = ticks;
+  $('#map-sky').innerHTML = [[60, 22, 7, 0], [178, 16, 5, .7], [330, 26, 6, 1.3], [250, 12, 4, 2]].map(([x, y, s, d]) =>
+    '<path class="twinkle" style="animation-delay:' + d + 's" d="M' + x + ' ' + (y - s) + 'l' + (s * .28) + ' ' + (s * .72) + ' ' + (s * .72) + ' ' + (s * .28) + '-' + (s * .72) + ' ' + (s * .28) + '-' + (s * .28) + ' ' + (s * .72) + '-' + (s * .28) + '-' + (s * .72) + '-' + (s * .72) + '-' + (s * .28) + ' ' + (s * .72) + '-' + (s * .28) + 'z" fill="#E8A33A"/>').join('');
+  const ids = MISSIONS.map(m => m.id);
+  $('#map-segs').innerHTML = ids.slice(0, -1).map((id, i) => {
+    const [x1, y1] = NODE_POS[id], [x2, y2] = NODE_POS[ids[i + 1]];
+    return '<path class="seg" data-seg="' + id + '" d="M' + x1 + ' ' + y1 + 'C' + x1 + ' ' + (y1 + 70) + ' ' + x2 + ' ' + (y2 - 70) + ' ' + x2 + ' ' + y2 + '"/>';
+  }).join('');
+  const map = $('#map');
+  $$('.node', map).forEach(n => n.remove());
+  MISSIONS.forEach(m => {
+    const [x, y] = NODE_POS[m.id]; const side = m.id === 'final' ? 'c' : (x < 200 ? 'l' : 'r');
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'node node-' + side; b.dataset.go = m.id; b.dataset.node = m.id;
+    if (side === 'l') b.style.left = (x / 4) + '%';
+    else if (side === 'r') b.style.right = ((400 - x) / 4) + '%';
+    else b.style.left = '50%';
+    b.style.top = (y / 780 * 100) + '%';
+    b.innerHTML = '<span class="node-dot">' + icon(m.icon) + '<span class="node-n"></span></span><span class="node-txt"><span class="node-k">' + (m.id === 'final' ? 'Chegada' : 'Missão ' + m.n) + '</span><span class="node-t">' + esc(m.title) + '</span></span>';
+    map.appendChild(b);
+  });
+}
+function updateMap() {
+  const nx = nextMission();
+  MISSIONS.forEach(m => {
+    const b = $('.node[data-node="' + m.id + '"]'); if (!b) return;
+    const done = !!S.done[m.id];
+    b.classList.toggle('is-done', done); b.classList.toggle('is-next', !!nx && nx.id === m.id);
+    $('.node-n', b).innerHTML = done ? icon('i-check') : (m.id === 'final' ? icon('i-spark') : m.n);
+    b.setAttribute('aria-label', (m.id === 'final' ? 'Desafio final' : 'Missão ' + m.n + ': ' + m.title) + (done ? ', concluída' : (nx && nx.id === m.id ? ', próxima' : '')));
+    const seg = $('.seg[data-seg="' + m.id + '"]'); if (seg) seg.classList.toggle('done', done);
+  });
+  const cta = $('#cta'), note = $('#cta-note');
+  const started = Object.keys(S.got).length > 0;
+  if (!nx) { cta.dataset.go = 'final'; cta.innerHTML = 'Ver meu cartão ' + icon('i-seta'); note.textContent = 'Trilha completa! Você pode jogar de novo para pegar os brilhos que faltam.'; }
+  else if (!started) { cta.dataset.go = nx.id; cta.innerHTML = 'Começar a Missão 1 ' + icon('i-seta'); note.textContent = 'Cerca de 25 minutos no total. O progresso fica salvo neste aparelho.'; }
+  else { cta.dataset.go = nx.id; cta.innerHTML = 'Continuar: ' + (nx.id === 'final' ? 'Desafio final' : 'Missão ' + nx.n) + ' ' + icon('i-seta'); note.textContent = seloCount() + ' de ' + MISSIONS.length + ' selos. Próxima parada: ' + nx.title + '.'; }
+}
+
+/* ---------- HUD, nível, selos ---------- */
+function updateHUD(bump) {
+  $('#hud-pts').textContent = S.pts;
+  const li = levelOf(S.pts);
+  $('#hud-lvl').textContent = LEVELS[li].name;
+  $('#hud-selos').textContent = seloCount() + '/' + MISSIONS.length;
+  const lo = Math.ceil(LEVELS[li].at * MAX), hi = li < LEVELS.length - 1 ? Math.ceil(LEVELS[li + 1].at * MAX) : MAX;
+  const f = hi > lo ? Math.min(1, (S.pts - lo) / (hi - lo)) : 1;
+  $('#hud-fill').style.width = (f * 100).toFixed(1) + '%';
+  $('#hud').title = li < LEVELS.length - 1 ? 'Faltam ' + (hi - S.pts) + ' brilhos para ' + LEVELS[li + 1].name : 'Nível máximo';
+  if (bump) { const p = $('.stat-pts'); p.classList.remove('bump'); void p.offsetWidth; p.classList.add('bump'); }
+  renderLevel();
+}
+function renderLevel() {
+  const li = levelOf(S.pts);
+  $('#lvl-name').textContent = LEVELS[li].name;
+  const hi = li < LEVELS.length - 1 ? Math.ceil(LEVELS[li + 1].at * MAX) : MAX;
+  $('#lvl-sub').textContent = S.pts + ' de ' + MAX + ' brilhos · ' + (li < LEVELS.length - 1 ? 'faltam ' + (hi - S.pts) + ' para ' + LEVELS[li + 1].name : 'nível máximo');
+  $('#lvl-track').innerHTML = LEVELS.map((l, k) => {
+    const a = Math.ceil(l.at * MAX), b = k < LEVELS.length - 1 ? Math.ceil(LEVELS[k + 1].at * MAX) : MAX;
+    const f = Math.max(0, Math.min(1, (S.pts - a) / (b - a)));
+    return '<div class="lt-seg' + (k === li ? ' cur' : '') + '" style="flex:' + (b - a) + ' 1 0"><span class="lt-bar"><span style="width:' + (f * 100).toFixed(1) + '%"></span></span><span class="lt-name">' + l.name + '</span></div>';
+  }).join('');
+}
+function refreshShelves() {
+  $('#shelf').innerHTML = MISSIONS.map(m => {
+    const on = !!S.done[m.id];
+    return '<button type="button" class="shelf-item' + (on ? ' on' : '') + '" data-go="' + m.id + '">' + seloHTML(m, on) + '<span class="shelf-name">' + esc(m.selo) + '</span><span class="shelf-sub">' + (on ? 'Conquistado' : (m.id === 'final' ? 'Desafio final' : 'Missão ' + m.n)) + '</span></button>';
+  }).join('');
+  $('#pp-pts').textContent = S.pts;
+  $('#pp-lvl').textContent = LEVELS[levelOf(S.pts)].name;
+  $('#pp-selos').textContent = seloCount() + '/' + MISSIONS.length;
+  $('#pp-selos-grid').innerHTML = MISSIONS.map(m => '<span title="' + esc(m.selo) + '">' + seloHTML(m, !!S.done[m.id]) + '</span>').join('');
+}
+function fillMeta() {
+  MISSIONS.forEach(m => {
+    const box = $('#v-' + m.id + ' [data-meta]'); if (!box) return;
+    const n = m.games.length;
+    box.innerHTML = '<span class="chip">Cerca de ' + m.min + ' min</span><span class="chip">' + n + ' ' + (n === 1 ? 'jogo' : 'jogos') + '</span><span class="chip chip-gold">' + icon('i-spark') + 'até ' + missionMax(m) + ' brilhos</span><span class="chip chip-selo">' + icon(m.icon) + 'Selo ' + esc(m.selo) + '</span>';
+  });
+}
+function updateMissionEnd(mid) {
+  const m = MISSIONS.find(x => x.id === mid); const box = $('[data-end="' + mid + '"]'); if (!m || !box) return;
+  const nx = MISSIONS[MISSIONS.indexOf(m) + 1]; const done = !!S.done[mid];
+  const list = m.games.map(id => { const ok = S.games[id] && S.games[id].done; return '<li class="' + (ok ? 'ok' : '') + '">' + icon(ok ? 'i-check' : 'i-circ') + esc(GAMES[id].title) + '</li>'; }).join('');
+  const nextBtn = nx ? '<button type="button" class="btn' + (done ? ' btn-primary' : '') + '" data-go="' + nx.id + '">' + (done ? 'Próxima' : 'Pular para') + ': ' + (nx.id === 'final' ? 'Desafio final' : 'Missão ' + nx.n) + ' ' + icon('i-seta') + '</button>' : '';
+  const finalNote = !nx && done ? '<button type="button" class="btn btn-primary" data-scroll="passport">Ver meu cartão ' + icon('i-seta') + '</button>' : '';
+  box.innerHTML = done
+    ? '<div class="end-row">' + seloHTML(m, true, 'lg') + '<div><p class="eyebrow">' + (nx ? 'Missão concluída' : 'Trilha completa') + '</p><h3>Selo ' + esc(m.selo) + ' conquistado</h3><p class="muted">+' + BONUS + ' brilhos de bônus já estão no seu placar.</p></div></div><div class="btn-row">' + nextBtn + finalNote + '<button type="button" class="btn btn-ghost" data-go="mapa">Voltar ao mapa</button></div>'
+    : '<div class="end-row">' + seloHTML(m, false, 'lg') + '<div><p class="eyebrow">Para ganhar o selo ' + esc(m.selo) + '</p><ul class="todo">' + list + '</ul></div></div><div class="btn-row">' + nextBtn + '<button type="button" class="btn btn-ghost" data-go="mapa">Voltar ao mapa</button></div>';
+}
+
+/* ---------- Selo conquistado ---------- */
+let lastFocus = null;
+function seloModal(m) {
+  const nx = MISSIONS[MISSIONS.indexOf(m) + 1];
+  lastFocus = document.activeElement;
+  $('#modal-body').innerHTML = seloHTML(m, true, 'xl') +
+    '<p class="eyebrow">Selo conquistado</p><h2 id="modal-t">' + esc(m.selo) + '</h2>' +
+    '<p>' + (nx ? 'Missão ' + m.n + ' concluída. Você ganhou +' + BONUS + ' brilhos de bônus.' : 'Você completou a trilha Camada a Camada! Seu cartão está pronto.') + '</p>' +
+    '<div class="btn-row center">' + (nx ? '<button type="button" class="btn btn-primary" data-close data-go="' + nx.id + '">' + (nx.id === 'final' ? 'Ir para o desafio final' : 'Próxima: Missão ' + nx.n) + '</button>' : '<button type="button" class="btn btn-primary" data-close data-scroll="passport">Ver meu cartão</button>') +
+    '<button type="button" class="btn btn-ghost" data-close data-go="mapa">Mapa</button></div>';
+  $('#modal').hidden = false;
+  burst();
+  const f = $('#modal-body .btn'); if (f) f.focus();
+}
+function closeModal() {
+  const md = $('#modal'); if (md.hidden) return;
+  md.hidden = true;
+  if (lastFocus && document.contains(lastFocus) && lastFocus.offsetParent !== null) lastFocus.focus({preventScroll: true});
+}
+
+/* ---------- Navegação ---------- */
+const VIEW_IDS = ['mapa'].concat(MISSIONS.map(m => m.id));
+function show(id, opts) {
+  opts = opts || {};
+  if (!VIEW_IDS.includes(id)) id = 'mapa';
+  current = id;
+  $$('.view').forEach(v => { v.hidden = v.id !== 'v-' + id; });
+  document.body.dataset.view = id;
+  try { history.replaceState(null, '', '#' + id); } catch (e) {}
+  window.scrollTo(0, 0);
+  if (opts.focus !== false) { const h = $('#v-' + id + ' [tabindex="-1"]'); if (h) h.focus({preventScroll: true}); }
+  if (id === 'mapa') updateMap(); else updateMissionEnd(id);
+}
+
+function bindStatic() {
+  document.addEventListener('click', e => {
+    const t = e.target;
+    if (t === $('#modal')) { closeModal(); return; }
+    const c = t.closest('[data-close]'); if (c) closeModal();
+    const g = t.closest('[data-go]');
+    if (g) { e.preventDefault(); show(g.dataset.go); return; }
+    const s = t.closest('[data-scroll]');
+    if (s) { const el = document.getElementById(s.dataset.scroll); if (el) el.scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block: 'start'}); }
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (h && h !== current && VIEW_IDS.includes(h)) show(h); });
+  $('#reset').addEventListener('click', () => { $('#reset-confirm').hidden = false; $('#reset-no').focus(); });
+  $('#reset-no').addEventListener('click', () => { $('#reset-confirm').hidden = true; $('#reset').focus(); });
+  $('#reset-yes').addEventListener('click', () => {
+    S = blank(); save();
+    $('#reset-confirm').hidden = true; $('#nome').value = '';
+    renderGames(); MISSIONS.forEach(m => updateMissionEnd(m.id));
+    updateHUD(); updateMap(); refreshShelves();
+    toast('Progresso apagado. Bora de novo!');
+  });
+  const nome = $('#nome');
+  nome.value = S.name || '';
+  nome.addEventListener('input', () => { S.name = nome.value.slice(0, 40); save(); });
+  $('#copy-cartao').addEventListener('click', () => {
+    const selos = MISSIONS.filter(m => S.done[m.id]).map(m => m.selo);
+    const txt = 'Camada a Camada · Cartão Pele Consciente\n' +
+      (S.name ? 'Nome: ' + S.name + '\n' : '') +
+      'Nível: ' + LEVELS[levelOf(S.pts)].name + '\n' +
+      'Brilhos: ' + S.pts + ' de ' + MAX + '\n' +
+      'Selos (' + selos.length + ' de ' + MISSIONS.length + '): ' + (selos.length ? selos.join(', ') : 'nenhum ainda');
+    copyText(txt, $('#cartao-status'), $('#cartao-fallback'));
+  });
+}
+
+function boot(view) {
+  buildMap(); fillMeta(); renderGames(); bindStatic();
+  MISSIONS.forEach(m => updateMissionEnd(m.id));
+  updateHUD(); updateMap(); refreshShelves();
+  const h = view || (location.hash || '').slice(1);
+  show(VIEW_IDS.includes(h) ? h : 'mapa', {focus: false});
+}
+function start(data) {
+  if (data && data.S) { S = Object.assign(blank(), data.S); save(); } else load();
+  boot(data && data.view);
+}
+const hot = window.claude && window.claude.hot;
+if (hot && typeof hot.snapshot === 'function') hot.snapshot(() => ({S: S, view: current}));
+if (hot && typeof hot.ready === 'function') hot.ready(start); else start((hot && hot.data) || {});
+})();
+</script>
+
+</body>
+</html>
